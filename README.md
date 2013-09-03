@@ -1,4 +1,4 @@
-Tetris
+﻿Tetris
 ======
 
 coding pratice : tetris game in Java
@@ -12,3 +12,5 @@ coding pratice : tetris game in Java
 * http://harddrop.com/wiki/SRS
 
 * 文件中包含測試點、以及測試成功時的方塊位置
+
+MIKE到此一遊
