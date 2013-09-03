@@ -21,4 +21,9 @@ public class Field {
 	public void checkLineClear(){
 		
 	}
+
+	public void reset() {
+		// TODO Auto-generated method stub
+		
+	}
 }
