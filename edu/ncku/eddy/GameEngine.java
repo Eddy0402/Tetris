@@ -21,15 +21,11 @@ public class GameEngine {
 		
 	private boolean gameRunning;
 	
-	public boolean isGameRunning() {
-		return gameRunning;
-	}
-
-
-
 	private Thread gameThread;
 	
 	public boolean shouldRedraw=true;
+	
+	private Controller keyController;
 	
 	public GameEngine(Field gameField){
 		this.gameField = gameField;
@@ -43,8 +39,10 @@ public class GameEngine {
 				
 		gameThread = new GameDisplayThread(Start.mainFrame,this);
 		gameRunning=true;
-		gameThread.run();
+		gameThread.start();
 		
+		keyController = new Controller(Start.mainFrame, this);
+		keyController.startListener();
 	}
 	
 	public void stop(){
@@ -53,6 +51,7 @@ public class GameEngine {
 			gameThread.interrupt();
 		}	
 		gameRunning=false;
+		keyController.stopListener();
 	}
 	
 	public void pause(){
@@ -125,7 +124,9 @@ public class GameEngine {
 		return this.gameField;
 	}
 	
-	
+	public boolean isGameRunning() {
+		return gameRunning;
+	}
 	
 	public class GameDisplayThread extends Thread{
 		
@@ -133,7 +134,6 @@ public class GameEngine {
 		private GameEngine targetEngine;
 		private GameAreaDisplay display;
 		private long lastTick;
-		private Controller keyController;
 		
 		private int tickCount = 0;
 		private long startTime;
@@ -146,8 +146,6 @@ public class GameEngine {
 		
 		@Override
 		public void run() {
-			keyController = new Controller(window, targetEngine);
-			keyController.startListener();
 			
 			startTime = System.currentTimeMillis();
 						
@@ -163,7 +161,7 @@ public class GameEngine {
 		@Override
 		public void interrupt() {
 			super.interrupt();
-			keyController.stopListener();
+
 		}		
 		
 		
