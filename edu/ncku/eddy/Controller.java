@@ -19,6 +19,8 @@ public class Controller {
 	public void startListener(){
 		this.keyListener = this.new GameKeyListener();
 		window.addKeyListener(this.keyListener);
+		window.setFocusable(true);
+		window.requestFocus();		
 	}
 
 	public void stopListener() {
@@ -34,7 +36,7 @@ public class Controller {
 			
 			switch (keycode) {
 			case 37:
-				//TODO:ек				
+				//TODO:ек	
 				break;
 			case 39:
 				//TODO:еk

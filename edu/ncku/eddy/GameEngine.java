@@ -43,6 +43,7 @@ public class GameEngine {
 		
 		keyController = new Controller(Start.mainFrame, this);
 		keyController.startListener();
+		
 	}
 	
 	public void stop(){

@@ -16,7 +16,7 @@ public class GUI {
 
 	public void initGUI() {
 
-		startEndButton = new JButton("Start");		
+		startEndButton = new JButton("開始");		
 		startEndButton.setBounds(300, 20, 200, 30);
 		
 		ActionListener startEndButtonActionListener = this.new startEndButtonAction();
@@ -24,7 +24,6 @@ public class GUI {
 		
 			
 		frame.add(startEndButton);
-		Start.gameEngine.start();
 	}
 
 	// 按鈕動作
@@ -33,7 +32,7 @@ public class GUI {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (!Start.gameEngine.isGameRunning()){
-				((JButton)e.getSource()).setText("結束");
+				((JButton)e.getSource()).setText("停止");
 				Start.gameEngine.start();
 			}else{
 				Start.gameEngine.stop();
