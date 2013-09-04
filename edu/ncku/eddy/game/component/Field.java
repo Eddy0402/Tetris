@@ -16,10 +16,6 @@ public class Field {
 		return blocks;
 	}
 	
-	public void lockPiece(Piece piece){
-		//TODO:將Piece內的blocks寫入此Field
-	}
-	
 	public void checkLineClear(){
 		
 	}

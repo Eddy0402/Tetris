@@ -1,7 +1,10 @@
 package edu.ncku.eddy.game.component.mino;
 
+import java.util.ArrayList;
+
 import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Piece;
+import edu.ncku.eddy.game.component.Piece.Type;
 
 public class L extends Piece {
 
@@ -10,7 +13,7 @@ public class L extends Piece {
 	}
 
 	@Override
-	public Block[] getBlocks() {
+	public ArrayList<BlockMovingPosition> getBlocks() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -61,5 +64,11 @@ public class L extends Piece {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public Type getType() {
+		return Type.L;
+	}
+
 
 }

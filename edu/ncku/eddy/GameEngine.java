@@ -1,14 +1,19 @@
 package edu.ncku.eddy;
 
 import java.io.ObjectInputStream.GetField;
+import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JFrame;
 
 import Randomizer.Randomizer;
 import edu.ncku.eddy.game.component.Block;
+import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Field;
 import edu.ncku.eddy.game.component.Piece;
+import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
 import edu.ncku.eddy.game.component.Piece.RotationMethod;
+import edu.ncku.eddy.game.component.Piece.Type;
 
 public class GameEngine {
 
@@ -27,11 +32,15 @@ public class GameEngine {
 	
 	public void start(){
 		gameField.reset();
-		
-		
-		gameThread = new GameThread(Start.mainFrame,this);
+		int seed = 155165516;
+		randomizer = new Randomizer(seed);
+		currentPiece = randomizer.getNewPiece();
+				
+		gameThread = new GameDisplayThread(Start.mainFrame,this);
 		gameRunning=true;
 		gameThread.run();
+		Controller keyController = new Controller(Start.mainFrame, this);
+		keyController.startListener();
 		
 	}
 	
@@ -72,8 +81,40 @@ public class GameEngine {
 	}
 	
 	public void lockPiece(){
-		Block[] blocksToLock = currentPiece.getBlocks();
-		//TODO:copy
+		ArrayList<BlockMovingPosition> BlockMovingPositions = currentPiece.getBlocks();
+		for (BlockMovingPosition blockMovingPosition : BlockMovingPositions) {
+			Type pieceType = currentPiece.getType();
+			BlockType blockType;
+			switch (pieceType) {
+			case I:
+				blockType = BlockType.I;
+				break;
+			case J:
+				blockType = BlockType.J;
+				break;
+			case L:
+				blockType = BlockType.L;
+				break;				
+			case O:
+				blockType = BlockType.O;
+				break;
+			case S:
+				blockType = BlockType.S;
+				break;
+			case T:
+				blockType = BlockType.T;
+				break;
+			case Z:
+				blockType = BlockType.Z;
+				break;
+			default:
+				blockType = BlockType.None;
+				break;
+			}
+			Block[][] blocks = gameField.getblocks();
+			
+			blocks[blockMovingPosition.X][blockMovingPosition.Y] = new Block(blockType);
+		}
 		currentPiece = randomizer.getNewPiece();
 	}
 	
@@ -81,14 +122,15 @@ public class GameEngine {
 		return this.gameField;
 	}
 	
-	public class GameThread extends Thread{
+	
+	
+	public class GameDisplayThread extends Thread{
 		
 		private JFrame window;
 		private GameEngine targetEngine;
-		private GameAreaDisplay display;
-		Controller keyController;
+		private GameAreaDisplay display;		
 		
-		public GameThread(JFrame window,GameEngine targetEngine){
+		public GameDisplayThread(JFrame window,GameEngine targetEngine){
 			this.window = window;
 			this.targetEngine = targetEngine;
 			this.display = new GameAreaDisplay(targetEngine);
@@ -96,16 +138,16 @@ public class GameEngine {
 		
 		@Override
 		public void run() {
-			keyController = new Controller(window, targetEngine);
-			keyController.startListener();
 			
-			while (targetEngine.gameRunning) {
+			
+			do{
+				
 				if (targetEngine.shouldRedraw){
 					this.display.draw();
 					targetEngine.shouldRedraw = false;
 				}
 				targetEngine.gameRunning=false;
-			}
+			}	while (targetEngine.gameRunning) ;
 		}
 
 		@Override
@@ -113,5 +155,10 @@ public class GameEngine {
 			super.interrupt();
 			keyController.stopListener();
 		}		
+		
+		public void tick(){
+			long start = System.nanoTime();
+			
+		}
 	}
 }
