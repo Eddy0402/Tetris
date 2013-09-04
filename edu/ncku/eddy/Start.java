@@ -18,8 +18,11 @@ public class Start {
 		//¹CÀ¸µøµ¡
 		mainFrame = new JFrame();
 		Dimension preferredSize = new Dimension(PREFERRED_HEIGHT, PREFERRED_WEIGHT);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainFrame.setSize(preferredSize);
 		mainFrame.setTitle("Tetris");
+		mainFrame.setLayout(null);
+		mainFrame.setVisible(true);
 				
 		GUI guiManager = new GUI(mainFrame);
 		guiManager.initGUI();
@@ -29,8 +32,9 @@ public class Start {
 		
 		gameEngine.start();
 		
+		System.out.println("load done");
 		
-		mainFrame.setVisible(true);
+		
 	}
 
 }
