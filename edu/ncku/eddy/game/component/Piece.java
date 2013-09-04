@@ -1,7 +1,5 @@
 package edu.ncku.eddy.game.component;
 
-import java.util.ArrayList;
-
 import edu.ncku.eddy.game.component.mino.*;
 
 
@@ -75,7 +73,7 @@ public abstract class Piece {
 	 * 獲得該Tetromino擁有的方塊，於lock時叫用
 	 * @return 四個座標
 	 */
-	public abstract ArrayList<BlockMovingPosition> getBlocks();
+	public abstract BlockMovingPosition[] getBlocks();
 	
 	/**
 	 * 旋轉Tetromino

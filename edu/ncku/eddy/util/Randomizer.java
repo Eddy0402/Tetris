@@ -47,6 +47,6 @@ public class Randomizer {
 
 	public Piece getNewPiece(){
 		//TODO 
-		return new J(4,19);
+		return new J(4,20);
 	}
 }

@@ -1,14 +1,11 @@
 package edu.ncku.eddy;
 
-import java.awt.AlphaComposite;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
-import java.io.IOException;
-
 import javax.imageio.ImageIO;
 
 import edu.ncku.eddy.game.component.Block;
@@ -31,7 +28,7 @@ public class Display extends Canvas {
 		// initialize
 		g.setColor(Color.black);
 		g.drawRect(0, 0, 800, 600);
-		drawBackground(g);
+		drawBackground(g.create());
 
 		// if playing
 		line = 0;
@@ -44,7 +41,7 @@ public class Display extends Canvas {
 					int positionY = 520 - line * 16;
 
 					if (block.getBlockType() != BlockType.None) {
-						drawBlock(g, block.getBlockType(), positionX, positionY, true);
+						drawBlock(g.create(), block.getBlockType(), positionX, positionY, true);
 					}
 					col++;
 				}
@@ -84,7 +81,8 @@ public class Display extends Canvas {
 					break;
 				}
 
-				drawBlock(g, type, positionX, positionY, false);
+				drawBlock(g.create(), type, positionX, positionY, false);
+				System.out.println(positionX + "," +positionY);
 
 			}
 
@@ -93,7 +91,7 @@ public class Display extends Canvas {
 	}
 
 	private void drawBlock(Graphics g, BlockType type, int x, int y, boolean isLocked) {
-		Graphics2D g2d = (Graphics2D) g.create();
+		Graphics2D g2d = (Graphics2D) g;
 		
 		g.translate(x, y);
 
@@ -111,8 +109,7 @@ public class Display extends Canvas {
 
 			g2d.drawImage(bgImage, null, null);			
 		}
-		
-		g.translate(-x ,- y);
+
 
 	}
 
@@ -128,35 +125,8 @@ public class Display extends Canvas {
 		}
 
 		g2d.drawImage(bgImage, null, null);
-		g2d.translate(-200, -200);
 	}
 
-	/*
-	 * public void draw() { line = 0;
-	 * 
-	 * BlockActionListener blockActionListener = new BlockActionListener(field);
-	 * 
-	 * blockComponents = new BlockComponent[20][10];
-	 * 
-	 * for (Block[] blockLine : this.field.getblocks()) {
-	 * 
-	 * col = 0;
-	 * 
-	 * for (Block block : blockLine) {
-	 * 
-	 * int positionX = 100 + col * 20; int positionY = 500 - line * 20;
-	 * 
-	 * col++; } line++; }
-	 * 
-	 * if (currentPiece != null) { for (BlockMovingPosition blockpPosition :
-	 * currentPiece.getBlocks()) { int positionX = 100 + blockpPosition.X; int
-	 * positionY = 500 - blockpPosition.Y;
-	 * 
-	 * BlockComponent blockComponent = new BlockComponent(currentPiece,
-	 * positionX, positionY); Start.mainFrame.add(blockComponent); } }
-	 * 
-	 * Start.mainFrame.repaint(); }
-	 */
 
 	/**
 	 * 

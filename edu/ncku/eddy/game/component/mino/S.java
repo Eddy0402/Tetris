@@ -1,7 +1,5 @@
 package edu.ncku.eddy.game.component.mino;
 
-import java.util.ArrayList;
-
 import edu.ncku.eddy.game.component.Piece;
 
 public class S extends Piece {
@@ -11,7 +9,7 @@ public class S extends Piece {
 	}
 
 	@Override
-	public ArrayList<BlockMovingPosition> getBlocks() {
+	public BlockMovingPosition[] getBlocks() {
 		// TODO Auto-generated method stub
 		return null;
 	}

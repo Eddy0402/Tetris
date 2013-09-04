@@ -1,7 +1,5 @@
 package edu.ncku.eddy.game.component.mino;
 
-import java.util.ArrayList;
-
 import edu.ncku.eddy.game.component.Piece;
 
 public class J extends Piece {
@@ -12,18 +10,13 @@ public class J extends Piece {
 	}
 
 	@Override
-	public ArrayList<BlockMovingPosition> getBlocks() {
+	public BlockMovingPosition[] getBlocks() {
 		BlockMovingPosition blockMovingPosition1 = new BlockMovingPosition(positionLine,positionCol);
 		BlockMovingPosition blockMovingPosition2 = new BlockMovingPosition(positionLine,positionCol - 1);
 		BlockMovingPosition blockMovingPosition3 = new BlockMovingPosition(positionLine,positionCol + 1);
 		BlockMovingPosition blockMovingPosition4 = new BlockMovingPosition(positionLine + 1,positionCol + 1);
 		
-		ArrayList<BlockMovingPosition> blockList = new ArrayList<>();
-		
-		blockList.add(blockMovingPosition1);
-		blockList.add(blockMovingPosition2);
-		blockList.add(blockMovingPosition3);
-		blockList.add(blockMovingPosition4);
+		BlockMovingPosition[] blockList = new BlockMovingPosition[]{blockMovingPosition1,blockMovingPosition2,blockMovingPosition3,blockMovingPosition4};
 		
 		return blockList;
 	}

@@ -1,7 +1,5 @@
 package edu.ncku.eddy;
 
-import java.util.ArrayList;
-
 import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Field;
@@ -80,8 +78,7 @@ public class GameEngine {
 	}
 	
 	public void lockPiece(){
-		ArrayList<BlockMovingPosition> BlockMovingPositions = currentPiece.getBlocks();
-		for (BlockMovingPosition blockMovingPosition : BlockMovingPositions) {
+		for (BlockMovingPosition blockMovingPosition : currentPiece.getBlocks()) {
 			Type pieceType = currentPiece.getType();
 			BlockType blockType;
 			switch (pieceType) {

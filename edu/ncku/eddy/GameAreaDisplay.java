@@ -8,7 +8,6 @@ import javax.swing.JComponent;
 import edu.ncku.eddy.game.component.Field;
 import edu.ncku.eddy.game.component.Piece;
 
-@SuppressWarnings(value = { "DeprecatedClass" })
 @Deprecated
 public class GameAreaDisplay extends JComponent {
 
