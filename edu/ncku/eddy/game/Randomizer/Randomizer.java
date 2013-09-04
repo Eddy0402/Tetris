@@ -1,4 +1,4 @@
-package Randomizer;
+package edu.ncku.eddy.game.Randomizer;
 
 import edu.ncku.eddy.game.component.Piece;
 import edu.ncku.eddy.game.component.mino.*;

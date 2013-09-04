@@ -1,12 +1,10 @@
 package edu.ncku.eddy;
 
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.swing.JFrame;
 
-import Randomizer.Randomizer;
+import edu.ncku.eddy.game.Randomizer.Randomizer;
 import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Field;
@@ -22,6 +20,13 @@ public class GameEngine {
 	private Randomizer randomizer;
 		
 	private boolean gameRunning;
+	
+	public boolean isGameRunning() {
+		return gameRunning;
+	}
+
+
+
 	private Thread gameThread;
 	
 	public boolean shouldRedraw=true;
@@ -39,8 +44,6 @@ public class GameEngine {
 		gameThread = new GameDisplayThread(Start.mainFrame,this);
 		gameRunning=true;
 		gameThread.run();
-		Controller keyController = new Controller(Start.mainFrame, this);
-		keyController.startListener();
 		
 	}
 	
@@ -128,7 +131,12 @@ public class GameEngine {
 		
 		private JFrame window;
 		private GameEngine targetEngine;
-		private GameAreaDisplay display;		
+		private GameAreaDisplay display;
+		private long lastTick;
+		private Controller keyController;
+		
+		private int tickCount = 0;
+		private long startTime;
 		
 		public GameDisplayThread(JFrame window,GameEngine targetEngine){
 			this.window = window;
@@ -138,16 +146,18 @@ public class GameEngine {
 		
 		@Override
 		public void run() {
+			keyController = new Controller(window, targetEngine);
+			keyController.startListener();
 			
-			
-			do{
-				
+			startTime = System.currentTimeMillis();
+						
+			do{				
+				tick();
 				if (targetEngine.shouldRedraw){
 					this.display.draw();
 					targetEngine.shouldRedraw = false;
 				}
-				targetEngine.gameRunning=false;
-			}	while (targetEngine.gameRunning) ;
+			}	while (targetEngine.isGameRunning()) ;
 		}
 
 		@Override
@@ -156,9 +166,25 @@ public class GameEngine {
 			keyController.stopListener();
 		}		
 		
+		
+		
 		public void tick(){
-			long start = System.nanoTime();
+			tickCount++;
+			//TODO:隨時間下降/lock的動作
+			//若有改變：
+			//targetEngine.shouldRedraw = true;
 			
+			
+			//經過tick總數tickCount
+			//經過時間System.currentTimeMillis()-startTime
+			
+			//100fps
+			lastTick = System.currentTimeMillis();
+			while (System.currentTimeMillis() - lastTick < 10 ){
+				try {
+					Thread.sleep(1);
+				} catch (Exception e) {	}				
+			}					
 		}
 	}
 }

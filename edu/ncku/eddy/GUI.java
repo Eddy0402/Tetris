@@ -1,70 +1,46 @@
 package edu.ncku.eddy;
 
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.Action;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public class GUI {
 
 	private JButton startEndButton;
-	private JFrame mainFrame;
+	private JFrame frame;
 
-	public GUI(JFrame mainFrame) {
-		this.mainFrame = mainFrame;
+	public GUI(JFrame frame) {
+		this.frame = frame;
 	}
 
 	public void initGUI() {
-		Action startEndButtonAction = this.new startEndButtonAction();
-		startEndButton = new JButton(startEndButtonAction);
+
+		startEndButton = new JButton("Start");		
+		startEndButton.setBounds(300, 20, 200, 30);
+		
+		ActionListener startEndButtonActionListener = this.new startEndButtonAction();
+		startEndButton.addActionListener(startEndButtonActionListener);
+		
+			
+		frame.add(startEndButton);
 	}
 
 	// 按鈕動作
 
-	public class startEndButtonAction implements Action {
-
+	public class startEndButtonAction implements ActionListener {
+		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
+			if (!Start.gameEngine.isGameRunning()){
+				((JButton)e.getSource()).setText("結束");
+				Start.gameEngine.start();				
+			}else{
+				Start.gameEngine.stop();
+				((JButton)e.getSource()).setText("開始");
+			}
 
 		}
 
-		@Override
-		public void addPropertyChangeListener(PropertyChangeListener listener) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public Object getValue(String key) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public boolean isEnabled() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public void putValue(String key, Object value) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void removePropertyChangeListener(PropertyChangeListener listener) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void setEnabled(boolean b) {
-			// TODO Auto-generated method stub
-
-		}
 	}
 }

@@ -2,9 +2,7 @@ package edu.ncku.eddy.game.component.mino;
 
 import java.util.ArrayList;
 
-import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Piece;
-import edu.ncku.eddy.game.component.Piece.Type;
 
 public class J extends Piece {
 

@@ -1,14 +1,9 @@
 package edu.ncku.eddy;
 
 import java.awt.Color;
-import java.awt.Graphics;
-
 import javax.swing.JButton;
 
-import org.omg.CosNaming._BindingIteratorImplBase;
-
 import edu.ncku.eddy.game.component.Block;
-import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Piece;
 import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
 

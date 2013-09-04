@@ -13,6 +13,9 @@ public class Start {
 	
 	public static JFrame mainFrame;
 
+	public static GameEngine gameEngine;
+	public static Field gameField;
+	
 	public static void main(String[] args) {
 		
 		//¹CÀ¸µøµ¡
@@ -24,17 +27,13 @@ public class Start {
 		mainFrame.setLayout(null);
 		mainFrame.setVisible(true);
 				
+		gameField = new Field();
+		gameEngine = new GameEngine(gameField);
+		
 		GUI guiManager = new GUI(mainFrame);
 		guiManager.initGUI();
 		
-		Field gameField = new Field();
-		GameEngine gameEngine = new GameEngine(gameField);
-		
-		gameEngine.start();
-		
-		System.out.println("load done");
-		
-		
+
 	}
 
 }
