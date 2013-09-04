@@ -33,7 +33,8 @@ public class GameEngine {
 	
 	public void start(){
 		gameField.reset();
-		int seed = 155165516;
+		long seed = 155165516;
+		
 		randomizer = new Randomizer(seed);
 		currentPiece = randomizer.getNewPiece();
 				

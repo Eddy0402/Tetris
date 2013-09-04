@@ -1,11 +1,13 @@
 package edu.ncku.eddy.game.Randomizer;
 
+import java.util.Random;
+
 import edu.ncku.eddy.game.component.Piece;
 import edu.ncku.eddy.game.component.mino.*;
 
 public class Randomizer {
-	private int seed;
-	public Randomizer(int seed){
+	private long seed;
+	public Randomizer(long seed){
 		this.seed = seed;
 	}
 	
