@@ -1,5 +1,9 @@
 package edu.ncku.eddy.game.component.mino;
 
+import edu.ncku.eddy.GameEngine;
+import edu.ncku.eddy.Launcher;
+import edu.ncku.eddy.game.component.Block;
+import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Piece;
 
 public class L extends Piece {
@@ -14,12 +18,11 @@ public class L extends Piece {
 		return null;
 	}
 
-
 	@Override
 	public boolean rotatePiece(RotationMethod rotationMethod) {
 		return false;
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -32,14 +35,14 @@ public class L extends Piece {
 	public boolean moveLeft() {
 		return false;
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public boolean moveRight() {
 		return false;
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -57,14 +60,11 @@ public class L extends Piece {
 	@Override
 	public boolean moveDown() {
 		return false;
-		// TODO Auto-generated method stub
-		
 	}
-	
+
 	@Override
 	public Type getType() {
 		return Type.L;
 	}
-
 
 }

@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import edu.ncku.eddy.game.component.Piece.RotationMethod;
+import edu.ncku.eddy.util.TestOutput;
 
 public class Controller {
 
@@ -34,7 +35,7 @@ public class Controller {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			int keycode = e.getKeyCode();
-			System.out.println(keycode);
+			TestOutput.sysout(keycode);
 
 			if (keycode == 10) {
 				if (!Launcher.gameEngine.isGameRunning()) {

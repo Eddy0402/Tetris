@@ -6,12 +6,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
+
 import javax.imageio.ImageIO;
 
 import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Piece;
 import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
+import edu.ncku.eddy.util.TestOutput;
 
 public class Display extends Canvas {
 
@@ -38,7 +40,7 @@ public class Display extends Canvas {
 				col = 0;
 				for (Block block : blockline) {
 					int positionX = 200 + col * 16;
-					int positionY = 520 - line * 16;
+					int positionY = 504 - line * 16;
 
 					if (block.getBlockType() != BlockType.None) {
 						drawBlock(g.create(), block.getBlockType(), positionX, positionY, true);
@@ -52,7 +54,7 @@ public class Display extends Canvas {
 			Piece currentPiece = Launcher.gameEngine.getCurrentPiece();
 			for (BlockMovingPosition blockpPosition : currentPiece.getBlocks()) {
 				int positionX = 200 + blockpPosition.col * 16;
-				int positionY = 520 - blockpPosition.line * 16;
+				int positionY = 504 - blockpPosition.line * 16;
 
 				BlockType type = null;
 				switch (currentPiece.getType()) {
@@ -82,7 +84,7 @@ public class Display extends Canvas {
 				}
 
 				drawBlock(g.create(), type, positionX, positionY, false);
-				System.out.println(positionX + "," +positionY);
+				TestOutput.sysout(positionX + "," +positionY);
 
 			}
 

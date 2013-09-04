@@ -8,77 +8,88 @@ import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
 import edu.ncku.eddy.game.component.Piece.RotationMethod;
 import edu.ncku.eddy.game.component.Piece.Type;
 import edu.ncku.eddy.util.Randomizer;
+import edu.ncku.eddy.util.TestOutput;
 
 public class GameEngine {
 
 	private Field gameField;
 	private Piece currentPiece;
 	private Randomizer randomizer;
-		
-	private boolean gameRunning=false;
-	
+
+	private boolean gameRunning = false;
+	protected boolean shouldRedraw;
+
 	private Thread gameThread;
-	
-	public boolean shouldRedraw=true;
-	
-	private Controller keyController;
-	
-	public GameEngine(){
-		this.gameField =  new Field();
+
+
+	public GameEngine() {
+		this.gameField = new Field();
 	}
-	
-	public void startGame(){
+
+	public void startGame() {
 		gameField.reset();
-		
-		//TODO:測試期間先用固定數測試
+
+		// TODO:測試期間先用固定數測試
 		long seed = 155165516;
-		
+
 		randomizer = new Randomizer(seed);
 		currentPiece = randomizer.getNewPiece();
-				
+
 		gameThread = new GameDisplayThread(this);
-		gameRunning=true;
+		gameRunning = true;
 		gameThread.start();
-						
+
 	}
-	
-	public void stopGame(){
-		
-		if(gameThread != null && gameThread.isAlive()){
+
+	public void gameOver(){
+		stopGame();
+	}
+	public void stopGame() {
+
+		if (gameThread != null && gameThread.isAlive()) {
 			gameThread.interrupt();
-		}	
-		gameRunning=false;
-		keyController.stopListener();
+		}
+		gameRunning = false;
+		Launcher.keyController.stopListener();
 	}
-	
-	public void pause(){
-		//TODO:暫緩
+
+	public void pause() {
+		// TODO:暫緩
 	}
-	
-	public void moveLeft(){
+
+	public void moveLeft() {
 		currentPiece.moveLeft();
 	}
-	
-	public void moveRight(){
+
+	public void moveRight() {
 		currentPiece.moveRight();
 	}
-	
-	public void rotatePiece(RotationMethod rotationMethod){
+
+	public void rotatePiece(RotationMethod rotationMethod) {
 		currentPiece.rotatePiece(rotationMethod);
 	}
-	
-	public void hardDrop(){
-		do{
-		currentPiece.moveDown();
-		}while(!currentPiece.moveDown());
+
+	public void hardDrop() {
+		do {
+			currentPiece.moveDown();
+		} while (!currentPiece.moveDown());
 	}
-	
-	public void drop(){
-		currentPiece.moveDown();
+
+	public void drop() {
+		TestOutput.sysout("drop()");
+		if(currentPiece.moveDown()){
+			shouldRedraw = true;
+		}else{
+			lockPiece();
+		}
 	}
-	
-	public void lockPiece(){
+
+	public void lockPiece() {
 		for (BlockMovingPosition blockMovingPosition : currentPiece.getBlocks()) {
+			if (blockMovingPosition.line > 19){
+				gameOver();	
+				return;
+			}
 			Type pieceType = currentPiece.getType();
 			BlockType blockType;
 			switch (pieceType) {
@@ -90,7 +101,7 @@ public class GameEngine {
 				break;
 			case L:
 				blockType = BlockType.L;
-				break;				
+				break;
 			case O:
 				blockType = BlockType.O;
 				break;
@@ -108,81 +119,86 @@ public class GameEngine {
 				break;
 			}
 			Block[][] blocks = gameField.getblocks();
-			
+
 			blocks[blockMovingPosition.line][blockMovingPosition.col] = new Block(blockType);
 		}
 		currentPiece = randomizer.getNewPiece();
 	}
-	
-	public Field GetField(){
+
+	public Field GetField() {
 		return this.gameField;
 	}
-	
+
 	public boolean isGameRunning() {
 		return gameRunning;
 	}
-	
-	public Piece getCurrentPiece(){
+
+	public Piece getCurrentPiece() {
 		return currentPiece;
 	}
-	
-	public class GameDisplayThread extends Thread{
-		
+
+	public class GameDisplayThread extends Thread {
+
 		private GameEngine targetEngine;
 		private Display display;
-		private long lastTick;
-		
-		//private int tickCount = 0;
-		//private long startTime;
-		
-		public GameDisplayThread(GameEngine targetEngine){
+
+		private long lastDrop = 0; // 上次drop的tick
+		private long tickCount; // 總共跑過幾個tick
+		private long startTimeMillis;
+		private long lastTimeMillis;
+
+		public GameDisplayThread(GameEngine targetEngine) {
 			this.targetEngine = targetEngine;
 			this.display = Launcher.gameDisplay;
-			
-			shouldRedraw = true;
 		}
-		
+
 		@Override
 		public void run() {
-			
-			//startTime = System.currentTimeMillis();
-						
-			do{				
+
+			tickCount = 0;
+			shouldRedraw = true;
+			startTimeMillis = System.currentTimeMillis();
+
+			// 遊戲迴圈
+			do {
 				tick();
-				if (targetEngine.shouldRedraw){
+				if (targetEngine.shouldRedraw) {
 					this.display.repaint();
 					targetEngine.shouldRedraw = false;
 				}
-			}while (targetEngine.isGameRunning()) ;
-			
+			} while (targetEngine.isGameRunning());
+
 		}
 
 		@Override
 		public void interrupt() {
 			super.interrupt();
 
-		}		
-		
-		
-		
-		public void tick(){
-			//tickCount++;
-						
-			//TODO:隨時間下降/lock的動作
-			//若有改變：
-			//targetEngine.shouldRedraw = true;
-			
-			
-			//經過tick總數tickCount
-			//經過時間System.currentTimeMillis()-startTime
-			
-			//100fps
-			lastTick = System.currentTimeMillis();
-			while (System.currentTimeMillis() - lastTick < 10 ){
+		}
+
+		public void tick() {
+			tickCount++;
+
+			if (tickCount - lastDrop > 10) {
+				targetEngine.drop();
+				TestOutput.sysout("drop tick");
+				lastDrop = tickCount;
+			}
+
+			// 若有改變：
+			// targetEngine.shouldRedraw = true;
+
+			// 經過tick總數tickCount
+			// 經過時間System.currentTimeMillis()-startTime
+
+			// 目標速度為100 ticks / sec
+			lastTimeMillis = System.currentTimeMillis();
+			while (System.currentTimeMillis() - lastTimeMillis < 10) {
 				try {
 					Thread.sleep(1);
-				} catch (Exception e) {	}				
-			}					
+				} catch (Exception e) {
+				}
+			}
 		}
 	}
 }
