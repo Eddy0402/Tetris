@@ -2,9 +2,6 @@ package edu.ncku.eddy;
 
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
-
-import edu.ncku.eddy.game.Randomizer.Randomizer;
 import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Field;
@@ -12,6 +9,7 @@ import edu.ncku.eddy.game.component.Piece;
 import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
 import edu.ncku.eddy.game.component.Piece.RotationMethod;
 import edu.ncku.eddy.game.component.Piece.Type;
+import edu.ncku.eddy.util.Randomizer;
 
 public class GameEngine {
 
@@ -19,7 +17,7 @@ public class GameEngine {
 	private Piece currentPiece;
 	private Randomizer randomizer;
 		
-	private boolean gameRunning;
+	private boolean gameRunning=false;
 	
 	private Thread gameThread;
 	
@@ -27,27 +25,26 @@ public class GameEngine {
 	
 	private Controller keyController;
 	
-	public GameEngine(Field gameField){
-		this.gameField = gameField;
+	public GameEngine(){
+		this.gameField =  new Field();
 	}
 	
-	public void start(){
+	public void startGame(){
 		gameField.reset();
+		
+		//TODO:測試期間先用固定數測試
 		long seed = 155165516;
 		
 		randomizer = new Randomizer(seed);
 		currentPiece = randomizer.getNewPiece();
 				
-		gameThread = new GameDisplayThread(Start.mainFrame,this);
+		gameThread = new GameDisplayThread(this);
 		gameRunning=true;
 		gameThread.start();
-		
-		keyController = new Controller(Start.mainFrame, this);
-		keyController.startListener();
-		
+						
 	}
 	
-	public void stop(){
+	public void stopGame(){
 		
 		if(gameThread != null && gameThread.isAlive()){
 			gameThread.interrupt();
@@ -61,27 +58,25 @@ public class GameEngine {
 	}
 	
 	public void moveLeft(){
-		
+		currentPiece.moveLeft();
 	}
 	
 	public void moveRight(){
-		
+		currentPiece.moveRight();
 	}
 	
 	public void rotatePiece(RotationMethod rotationMethod){
-		
+		currentPiece.rotatePiece(rotationMethod);
 	}
 	
 	public void hardDrop(){
-		
-	}
-	
-	public void softDrop(){
-		
+		do{
+		currentPiece.moveDown();
+		}while(!currentPiece.moveDown());
 	}
 	
 	public void drop(){
-		
+		currentPiece.moveDown();
 	}
 	
 	public void lockPiece(){
@@ -117,7 +112,7 @@ public class GameEngine {
 			}
 			Block[][] blocks = gameField.getblocks();
 			
-			blocks[blockMovingPosition.X][blockMovingPosition.Y] = new Block(blockType);
+			blocks[blockMovingPosition.line][blockMovingPosition.col] = new Block(blockType);
 		}
 		currentPiece = randomizer.getNewPiece();
 	}
@@ -130,34 +125,39 @@ public class GameEngine {
 		return gameRunning;
 	}
 	
+	public Piece getCurrentPiece(){
+		return currentPiece;
+	}
+	
 	public class GameDisplayThread extends Thread{
 		
-		private JFrame window;
 		private GameEngine targetEngine;
-		private GameAreaDisplay display;
+		private Display display;
 		private long lastTick;
 		
-		private int tickCount = 0;
-		private long startTime;
+		//private int tickCount = 0;
+		//private long startTime;
 		
-		public GameDisplayThread(JFrame window,GameEngine targetEngine){
-			this.window = window;
+		public GameDisplayThread(GameEngine targetEngine){
 			this.targetEngine = targetEngine;
-			this.display = new GameAreaDisplay(targetEngine);
+			this.display = Launcher.gameDisplay;
+			
+			shouldRedraw = true;
 		}
 		
 		@Override
 		public void run() {
 			
-			startTime = System.currentTimeMillis();
+			//startTime = System.currentTimeMillis();
 						
 			do{				
 				tick();
 				if (targetEngine.shouldRedraw){
-					this.display.draw();
+					this.display.repaint();
 					targetEngine.shouldRedraw = false;
 				}
-			}	while (targetEngine.isGameRunning()) ;
+			}while (targetEngine.isGameRunning()) ;
+			
 		}
 
 		@Override
@@ -169,7 +169,8 @@ public class GameEngine {
 		
 		
 		public void tick(){
-			tickCount++;
+			//tickCount++;
+						
 			//TODO:隨時間下降/lock的動作
 			//若有改變：
 			//targetEngine.shouldRedraw = true;

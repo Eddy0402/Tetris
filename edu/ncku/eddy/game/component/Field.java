@@ -17,7 +17,15 @@ public class Field {
 	}
 	
 	public void checkLineClear(){
-		
+		//TODO
+	}
+	
+	public void setBlock(Block block,int x,int y){
+		this.blocks[x][y] = block;
+	}
+	
+	public Block getBlock(int x,int y){
+		return this.blocks[x][y];
 	}
 
 	public void reset() {

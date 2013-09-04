@@ -1,38 +1,60 @@
 package edu.ncku.eddy;
 
 import java.awt.Color;
-import javax.swing.JButton;
+import java.awt.Graphics;
 
-import edu.ncku.eddy.game.component.Block;
+import javax.swing.JComponent;
+
+import edu.ncku.eddy.game.component.Field;
 import edu.ncku.eddy.game.component.Piece;
-import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
 
-public class GameAreaDisplay {
-	private Block[][] blocks;
+@SuppressWarnings(value = { "DeprecatedClass" })
+@Deprecated
+public class GameAreaDisplay extends JComponent {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1629244987457004028L;
 	private Piece currentPiece;
+	private Field field;
 
 	private int line;
 	private int col;
 
 	public GameAreaDisplay(GameEngine gameEngine) {
-		this.blocks = gameEngine.GetField().getblocks();
+		this.field = gameEngine.GetField();
 	}
 
+	
+	@Override
+	public void paintComponent(Graphics g){
+		super.paintComponent(g);
+		
+		g.translate(200, 200);
+		g.setColor(Color.black);
+		g.fillRect(5, 5, 100, 100);
+		g.drawLine(100,100,150,150);
+	}
+	
+	/*
 	public void draw() {
-		line = 1;
+		line = 0;
 
-		for (Block[] blockLine : this.blocks) {
+		BlockActionListener blockActionListener = new BlockActionListener(field);
 
-			col = 1;
+		blockComponents = new BlockComponent[20][10];
+
+		for (Block[] blockLine : this.field.getblocks()) {
+
+			col = 0;
 
 			for (Block block : blockLine) {
 
 				int positionX = 100 + col * 20;
 				int positionY = 500 - line * 20;
 
-				BlockComponent blockComponent = new BlockComponent(block, positionX, positionY);
-
-				Start.mainFrame.add(blockComponent);
+				
 				col++;
 			}
 			line++;
@@ -50,93 +72,6 @@ public class GameAreaDisplay {
 
 		Start.mainFrame.repaint();
 	}
-
-	public class BlockComponent extends JButton {
-
-		private Color bColor;
-		private int x, y;
-
-		public BlockComponent(Block block, int x, int y) {
-			super();
-			switch (block.getBlockType()) {
-			case None:
-				bColor = Color.BLACK;
-				break;
-			case I:
-				bColor = new Color(0, 255, 255);
-				break;
-			case J:
-				bColor = Color.BLUE;
-				break;
-			case L:
-				bColor = Color.ORANGE;
-				break;
-			case O:
-				bColor = Color.YELLOW;
-				break;
-			case S:
-				bColor = Color.GREEN;
-				break;
-			case T:
-				bColor = new Color(153, 0, 255);
-				break;
-			case Z:
-				bColor = Color.RED;
-				break;
-			case garbage:
-				bColor = Color.LIGHT_GRAY;
-				break;
-			default:
-				bColor = Color.BLACK;
-				break;
-			}
-
-			this.x = x;
-			this.y = y;
-
-			this.setBounds(x, y, 20, 20);
-			this.setBackground(bColor);
-		}
-
-		public BlockComponent(Piece piece, int x, int y) {
-			super();
-			switch (piece.getType()) {
-			case I:
-				bColor = new Color(0, 255, 255);
-				break;
-			case J:
-				bColor = Color.BLUE;
-				break;
-			case L:
-				bColor = Color.ORANGE;
-				break;
-			case O:
-				bColor = Color.YELLOW;
-				break;
-			case S:
-				bColor = Color.GREEN;
-				break;
-			case T:
-				bColor = new Color(153, 0, 255);
-				break;
-			case Z:
-				bColor = Color.RED;
-				break;
-			default:
-				break;
-			}
-
-			bColor.brighter();
-
-			this.x = x;
-			this.y = y;
-
-			this.setBounds(x, y, 20, 20);
-			this.setBackground(bColor);
-		}
-
-		private static final long serialVersionUID = 1L;
-
-	}
+	*/
 
 }

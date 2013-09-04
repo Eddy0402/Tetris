@@ -1,6 +1,4 @@
-package edu.ncku.eddy.game.Randomizer;
-
-import java.util.Random;
+package edu.ncku.eddy.util;
 
 import edu.ncku.eddy.game.component.Piece;
 import edu.ncku.eddy.game.component.mino.*;

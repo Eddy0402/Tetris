@@ -8,12 +8,24 @@ public class J extends Piece {
 
 	public J(int positionX, int positionY) {
 		super(positionX, positionY);
+		
 	}
 
 	@Override
 	public ArrayList<BlockMovingPosition> getBlocks() {
-		// TODO Auto-generated method stub
-		return null;
+		BlockMovingPosition blockMovingPosition1 = new BlockMovingPosition(positionLine,positionCol);
+		BlockMovingPosition blockMovingPosition2 = new BlockMovingPosition(positionLine,positionCol - 1);
+		BlockMovingPosition blockMovingPosition3 = new BlockMovingPosition(positionLine,positionCol + 1);
+		BlockMovingPosition blockMovingPosition4 = new BlockMovingPosition(positionLine + 1,positionCol + 1);
+		
+		ArrayList<BlockMovingPosition> blockList = new ArrayList<>();
+		
+		blockList.add(blockMovingPosition1);
+		blockList.add(blockMovingPosition2);
+		blockList.add(blockMovingPosition3);
+		blockList.add(blockMovingPosition4);
+		
+		return blockList;
 	}
 
 

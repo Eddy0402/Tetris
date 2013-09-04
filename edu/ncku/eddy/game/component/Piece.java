@@ -10,9 +10,9 @@ import edu.ncku.eddy.game.component.mino.*;
  * @author Eddy
  */
 public abstract class Piece {
-	protected int positionX;
-	protected int positionY;
-	protected int rotationState;
+	protected int positionCol;
+	protected int positionLine;
+	protected RotationState rotationState;
 
 	
 	/**
@@ -63,9 +63,10 @@ public abstract class Piece {
 		}
 	}
 	
-	public Piece(int positionX, int positionY) {
-		this.positionX = positionX;
-		this.positionY = positionY;
+	public Piece(int positionCol, int positionLine) {
+		this.positionCol = positionCol;
+		this.positionLine = positionLine;
+		rotationState = RotationState.Default;
 	}
 	
 	public abstract Type getType(); 
@@ -97,7 +98,11 @@ public abstract class Piece {
 	protected abstract boolean canMoveRight();
 	
 	public class BlockMovingPosition{
-		public int X;
-		public int Y;
+		public int line;
+		public int col;
+		public BlockMovingPosition(int line,int col){
+			this.line = line;
+			this.col= col;			
+		}
 	}
 }
