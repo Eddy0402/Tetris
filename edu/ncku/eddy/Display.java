@@ -1,11 +1,14 @@
 package edu.ncku.eddy;
 
 import java.awt.Canvas;
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.BufferStrategy;
 import java.io.File;
+import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 
@@ -17,19 +20,35 @@ import edu.ncku.eddy.util.TestOutput;
 
 public class Display extends Canvas {
 
+	private static final int LEFT = 68;
+	private static final int TOP = 83;
+
 	private int line;
 	private int col;
 
 	public Display(GameEngine gameEngine) {
-		setSize(800, 600);
+		setSize(320, 480);
+
+	}
+	
+	public void update() {
+	    	
+		Graphics offgc;
+		Image offscreen = null;
+		Dimension d = getSize();
+		
+	    offscreen = createImage(d.width, d.height);
+	    offgc = offscreen.getGraphics();
+
+	    paint(offgc);
+	    
+		this.getGraphics().drawImage(offscreen, 0, 0, this);
 	}
 
 	@Override
 	public void paint(Graphics g) {
 
 		// initialize
-		g.setColor(Color.black);
-		g.drawRect(0, 0, 800, 600);
 		drawBackground(g.create());
 
 		// if playing
@@ -39,8 +58,8 @@ public class Display extends Canvas {
 			for (Block[] blockline : Launcher.gameEngine.GetField().getblocks()) {
 				col = 0;
 				for (Block block : blockline) {
-					int positionX = 200 + col * 16;
-					int positionY = 504 - line * 16;
+					int positionX = LEFT + col * 16;
+					int positionY = TOP + 304 - line * 16;
 
 					if (line < 20) {
 						if (block.getBlockType() != BlockType.None) {
@@ -56,8 +75,8 @@ public class Display extends Canvas {
 			Piece currentPiece = Launcher.gameEngine.getCurrentPiece();
 			for (BlockMovingPosition blockpPosition : currentPiece.getBlocks()) {
 				if (blockpPosition.line < 20) {
-					int positionX = 200 + blockpPosition.col * 16;
-					int positionY = 504 - blockpPosition.line * 16;
+					int positionX = LEFT + blockpPosition.col * 16;
+					int positionY = TOP + 304 - blockpPosition.line * 16;
 
 					BlockType type = null;
 					switch (currentPiece.getType()) {
@@ -91,16 +110,8 @@ public class Display extends Canvas {
 				}
 			}
 
-			// draw score or other things
-			
-			drawScore(g.create());
-			
 		}
-	}
-	
-	private void drawScore(Graphics g)	{
-		Graphics2D g2d = (Graphics2D) g;
-		
+
 	}
 
 	private void drawBlock(Graphics g, BlockType type, int x, int y, boolean isLocked) {
@@ -128,16 +139,28 @@ public class Display extends Canvas {
 
 	private void drawBackground(Graphics g) {
 
-		Graphics2D g2d = (Graphics2D) g;
-		g2d.translate(200, 200);
+		Graphics2D g2d = (Graphics2D) g.create();
 
+		g2d.translate(0, 0);
 		Image bgImage = null;
 		try {
-			bgImage = ImageIO.read(new File("res/bg.png"));
+			bgImage = ImageIO.read(new File("res/back0.png"));
 		} catch (Exception ex) {
 		}
 
 		g2d.drawImage(bgImage, null, null);
+
+		Graphics2D g2d2 = (Graphics2D) g.create();
+
+		g2d2.translate(LEFT, TOP);
+
+		Image fieldImage = null;
+		try {
+			fieldImage = ImageIO.read(new File("res/bg.png"));
+		} catch (Exception ex) {
+		}
+
+		g2d2.drawImage(fieldImage, null, null);
 	}
 
 	/**

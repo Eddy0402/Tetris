@@ -20,7 +20,8 @@ public class Field {
 	/**
 	 * 確認可否消行，若可以則消行
 	 */
-	public void checkLineClear() {		
+	public int checkLineClear() {		
+		int lineClearCount = 0;
 		for (int line = 0; line < 30; line++) {
 			
 			//是否完整行
@@ -36,14 +37,16 @@ public class Field {
 						blocks[dropLine- 1][dropCol] = blocks[dropLine][dropCol];						
 					}
 				}
-				//在最上行創一排新的方塊
-				
+				//在最上行創一排新的方塊				
 				for(int newCol=0;newCol<10;newCol++){
 					blocks[29][newCol] = new Block(BlockType.None);
 				}		
+				
+				lineClearCount++;
 				line--;//使下落的那行能被判斷
 			}			
 		}
+		return lineClearCount;
 	}
 	
 	/**

@@ -1,11 +1,10 @@
 package edu.ncku.eddy;
 
-import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
-import java.util.Timer;
 
 import javax.swing.JOptionPane;
-
 import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Field;
@@ -24,14 +23,15 @@ public class GameEngine {
 
 	private boolean gameRunning = false;
 	private boolean shouldRedraw;
-	
+
 	private Thread gameThread;
 
 	// drop失敗兩次則lock
 	private int lockCount = 0;
-	
-	//使用的Piece數量
+
+	// 統計資料
 	private int pieceCount;
+	private int clearedLine;
 
 	public int getPieceCount() {
 		return pieceCount;
@@ -44,24 +44,24 @@ public class GameEngine {
 	public void startGame() {
 		gameField.reset();
 
-		//種子碼
+		// 種子碼
 		long seed = new Random().nextLong();
-		
-		pieceCount = 0;		
+
+		pieceCount = 0;
+		clearedLine = 0;
 
 		randomizer = new Randomizer(seed);
 		getNewPiece();
 
 		gameThread = new GameDisplayThread(this);
 		gameRunning = true;
-		gameThread.start();		
-		
+		gameThread.start();
+
 	}
-	
-	private void getNewPiece(){
-		TestOutput.sysout(pieceCount);
+
+	private void getNewPiece() {
 		currentPiece = randomizer.getNewPiece();
-		if (!currentPiece.canMoveDown()){
+		if (!currentPiece.canMoveDown()) {
 			gameOver();
 		}
 	}
@@ -87,20 +87,23 @@ public class GameEngine {
 	}
 
 	public void moveLeft() {
-		if(currentPiece.moveLeft())shouldRedraw = true;
+		if (currentPiece.moveLeft())
+			shouldRedraw = true;
 	}
 
 	public void moveRight() {
-		if(currentPiece.moveRight())shouldRedraw = true;
+		if (currentPiece.moveRight())
+			shouldRedraw = true;
 	}
 
 	public void rotatePiece(RotationMethod rotationMethod) {
-		if(currentPiece.rotatePiece(rotationMethod))shouldRedraw = true;
+		if (currentPiece.rotatePiece(rotationMethod))
+			shouldRedraw = true;
 	}
 
 	public void hardDrop() {
 		do {
-			
+
 		} while (currentPiece.moveDown());
 		lockPiece();
 		shouldRedraw = true;
@@ -155,7 +158,7 @@ public class GameEngine {
 
 			blocks[blockMovingPosition.line][blockMovingPosition.col] = new Block(blockType);
 		}
-		gameField.checkLineClear();
+		clearedLine = clearedLine + gameField.checkLineClear();
 		getNewPiece();
 	}
 
@@ -174,21 +177,24 @@ public class GameEngine {
 	public class GameDisplayThread extends Thread {
 
 		private GameEngine targetEngine;
-		private Display display;
 
 		private long lastDrop = 0; // 上次drop的tick
 		private long tickCount; // 總共跑過幾個tick
 		private long startTimeMillis;
 		private long lastTimeMillis;
+		
+		
+		private String time40L;		
+		private String time;
 
 		public GameDisplayThread(GameEngine targetEngine) {
 			this.targetEngine = targetEngine;
-			this.display = Launcher.gameDisplay;
 		}
 
 		@Override
 		public void run() {
-
+			
+			time40L="";	
 			tickCount = 0;
 			shouldRedraw = true;
 			startTimeMillis = System.currentTimeMillis();
@@ -196,11 +202,7 @@ public class GameEngine {
 			// 遊戲迴圈
 			do {
 				tick();
-				if (targetEngine.shouldRedraw) {
-					this.display.repaint();
-					targetEngine.shouldRedraw = false;
-				}
-			} while (targetEngine.isGameRunning());
+			} while (isGameRunning());
 
 		}
 
@@ -213,18 +215,29 @@ public class GameEngine {
 		public void tick() {
 			tickCount++;
 
-			//每秒下降一次
+			// 每秒下降一次
 			if (tickCount - lastDrop > 100) {
 				targetEngine.drop();
 				TestOutput.sysout("drop tick");
 				lastDrop = tickCount;
 			}
 
-			// 若有改變：
-			// targetEngine.shouldRedraw = true;
+			//更新遊戲畫面
+			if (targetEngine.shouldRedraw) {
+				Launcher.gameDisplay.update();
+				shouldRedraw = false;
+			}
 
-			// 經過tick總數tickCount
-			// 經過時間System.currentTimeMillis()-startTime
+			//顯示遊戲數據
+			SimpleDateFormat df = new SimpleDateFormat("mm:ss.SSS");
+			long timeMill = System.currentTimeMillis() - startTimeMillis;
+			time =  df.format(new Date(timeMill));
+			double pps=(float)pieceCount / timeMill *1000;
+			double ppm=pps*60;
+			double lpm=(float)clearedLine/timeMill*60000;
+			if (clearedLine>40  && time40L.equals(""))time40L=time;
+			
+			Launcher.scoreDisplay.update(time, pieceCount, clearedLine,pps,ppm,lpm,time40L);
 
 			// 目標速度為100 ticks / sec
 			lastTimeMillis = System.currentTimeMillis();

@@ -6,7 +6,7 @@ public class TestOutput {
 	}
 
 	public static void sysout(int outint) {
-		System.out.println(outint);
+		//System.out.println(outint);
 	}
 
 	public static void sysout(boolean outboolean) {
