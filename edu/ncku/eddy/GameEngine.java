@@ -67,13 +67,15 @@ public class GameEngine {
 	}
 
 	public void gameOver() {
-		Launcher.gameDisplay.repaint();
-		stopGame();
+		if (gameThread != null && gameThread.isAlive()) {
+			gameThread.interrupt();
+		}
 		JOptionPane.showMessageDialog(null, "Game Over! Press Enter to restart.");
+		gameRunning = false;
 	}
 
 	public void stopGame() {
-
+		JOptionPane.showMessageDialog(null, "Game Stoped! Press Enter to restart.");
 		if (gameThread != null && gameThread.isAlive()) {
 			gameThread.interrupt();
 		}

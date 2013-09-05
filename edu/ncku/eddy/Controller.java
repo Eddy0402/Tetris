@@ -73,8 +73,12 @@ public class Controller {
 					// TODO:Shift(Hold)
 					break;
 				case 32:
-					// TODO:Space(HardDrop)
+					// Space(HardDrop)
 					targetEngine.hardDrop();
+					break;					
+				case 27:
+					// µ²§ô¹CÀ¸
+					targetEngine.stopGame();
 					break;
 				default:
 					break;
