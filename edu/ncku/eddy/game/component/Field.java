@@ -6,7 +6,7 @@ import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
 public class Field {
 
 	// 所有格子
-	private Block[][] blocks = new Block[20][10];
+	private Block[][] blocks = new Block[30][10];
 
 	// 初始化遊戲區
 	public Field() {
@@ -26,7 +26,7 @@ public class Field {
 	}
 
 	public Block getBlock(int x, int y) {
-		if (x > 19 || x < 0 || y > 9 || y < 0) {
+		if (x > 29 || x < 0 || y > 9 || y < 0) {
 			return null;
 		} else {
 			return this.blocks[x][y];
@@ -38,7 +38,7 @@ public class Field {
 	}
 
 	public void reset() {
-		for (int line = 0; line < 20; line++) {
+		for (int line = 0; line < 30; line++) {
 			for (int col = 0; col < 10; col++) {
 				blocks[line][col] = new Block(BlockType.None);
 			}

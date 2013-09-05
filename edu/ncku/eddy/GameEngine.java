@@ -35,12 +35,19 @@ public class GameEngine {
 		long seed = 155165516;
 
 		randomizer = new Randomizer(seed);
-		currentPiece = randomizer.getNewPiece();
+		getNewPiece();
 
 		gameThread = new GameDisplayThread(this);
 		gameRunning = true;
 		gameThread.start();
 
+	}
+	
+	private void getNewPiece(){
+		currentPiece = randomizer.getNewPiece();
+		if (!currentPiece.canMoveDown()){
+			gameOver();
+		}
 	}
 
 	public void gameOver() {
@@ -61,15 +68,15 @@ public class GameEngine {
 	}
 
 	public void moveLeft() {
-		currentPiece.moveLeft();
+		if(currentPiece.moveLeft())shouldRedraw = true;
 	}
 
 	public void moveRight() {
-		currentPiece.moveRight();
+		if(currentPiece.moveRight())shouldRedraw = true;
 	}
 
 	public void rotatePiece(RotationMethod rotationMethod) {
-		currentPiece.rotatePiece(rotationMethod);
+		if(currentPiece.rotatePiece(rotationMethod))shouldRedraw = true;
 	}
 
 	public void hardDrop() {
@@ -80,7 +87,6 @@ public class GameEngine {
 
 	public void drop() {
 
-		TestOutput.sysout("drop()");
 		if (currentPiece.moveDown()) {
 			shouldRedraw = true;
 		} else {
@@ -94,10 +100,6 @@ public class GameEngine {
 
 	public void lockPiece() {
 		for (BlockMovingPosition blockMovingPosition : currentPiece.getBlocks()) {
-			if (blockMovingPosition.line > 19) {
-				gameOver();
-				return;
-			}
 			Type pieceType = currentPiece.getType();
 			BlockType blockType;
 			switch (pieceType) {
@@ -130,7 +132,7 @@ public class GameEngine {
 
 			blocks[blockMovingPosition.line][blockMovingPosition.col] = new Block(blockType);
 		}
-		currentPiece = randomizer.getNewPiece();
+		getNewPiece();
 	}
 
 	public Field GetField() {

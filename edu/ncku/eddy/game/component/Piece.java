@@ -3,6 +3,7 @@ package edu.ncku.eddy.game.component;
 import edu.ncku.eddy.Launcher;
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.mino.*;
+import edu.ncku.eddy.util.TestOutput;
 
 /**
  * 操作中的Tetromino，position代表其中心方塊
@@ -12,7 +13,7 @@ import edu.ncku.eddy.game.component.mino.*;
 public abstract class Piece {
 	protected int positionCol;
 	protected int positionLine;
-	protected RotationState rotationState;
+	protected RotationState rotationState = RotationState.Default;
 
 	/**
 	 * Tetromino種類
@@ -91,7 +92,7 @@ public abstract class Piece {
 	}
 
 	/**
-	 * 傳入位置及轉位，獲得BlockMovingPosition陣列
+	 * 傳入中心位置及轉位，獲得該Tetromino所有的方塊，傳回BlockMovingPosition陣列
 	 * <b>於子類別實作</b>
 	 * 
 	 * @param positionLine 目標方塊中心位置
@@ -119,8 +120,8 @@ public abstract class Piece {
 	 * @return <code>true</code> 有移動 <code>false</code> 未移動
 	 */
 	public final boolean moveLeft() {
-		if (canMoveDown()) {
-			positionCol++;
+		if (canMoveLeft()) {
+			positionCol--;
 			return true;
 		} else {
 			return false;
@@ -133,7 +134,7 @@ public abstract class Piece {
 	 * @return <code>true</code> 有移動 <code>false</code> 未移動
 	 */
 	public final boolean moveRight() {
-		if (canMoveDown()) {
+		if (canMoveRight()) {
 			positionCol++;
 			return true;
 		} else {
@@ -178,7 +179,8 @@ public abstract class Piece {
 	 * 
 	 * @return <code>true</code> 可移動 <code>false</code> 不可移動
 	 */
-	protected final boolean canMoveDown() {
+	public final boolean canMoveDown() {
+		TestOutput.sysout( checkPoint(positionLine - 1, positionCol, rotationState));
 		return checkPoint(positionLine - 1, positionCol, rotationState);
 	}
 
@@ -195,10 +197,16 @@ public abstract class Piece {
 	 */
 	protected final boolean checkPoint(int positionLine, int positionCol, RotationState rotationState) {
 
-		boolean result = false;
+		boolean result = true;
 
 		for (BlockMovingPosition position : getBlocks(positionLine, positionCol, rotationState)) {
-			result = Launcher.gameEngine.GetField().getBlock(position).getBlockType() == BlockType.None;
+			if (Launcher.gameEngine.GetField().getBlock(position) == null){
+				result = false;
+				return result;
+			}
+			if (Launcher.gameEngine.GetField().getBlock(position).getBlockType() != BlockType.None){
+				result = false;
+			}
 		}
 
 		return result;
