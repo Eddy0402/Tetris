@@ -42,8 +42,10 @@ public class Display extends Canvas {
 					int positionX = 200 + col * 16;
 					int positionY = 504 - line * 16;
 
-					if (block.getBlockType() != BlockType.None) {
-						drawBlock(g.create(), block.getBlockType(), positionX, positionY, true);
+					if (line < 20) {
+						if (block.getBlockType() != BlockType.None) {
+							drawBlock(g.create(), block.getBlockType(), positionX, positionY, true);
+						}
 					}
 					col++;
 				}
@@ -53,39 +55,40 @@ public class Display extends Canvas {
 			// draw piece
 			Piece currentPiece = Launcher.gameEngine.getCurrentPiece();
 			for (BlockMovingPosition blockpPosition : currentPiece.getBlocks()) {
-				int positionX = 200 + blockpPosition.col * 16;
-				int positionY = 504 - blockpPosition.line * 16;
+				if (blockpPosition.line < 20) {
+					int positionX = 200 + blockpPosition.col * 16;
+					int positionY = 504 - blockpPosition.line * 16;
 
-				BlockType type = null;
-				switch (currentPiece.getType()) {
-				case I:
-					type = BlockType.I;
-					break;
-				case J:
-					type = BlockType.J;
-					break;
-				case L:
-					type = BlockType.L;
-					break;
-				case O:
-					type = BlockType.O;
-					break;
-				case S:
-					type = BlockType.S;
-					break;
-				case T:
-					type = BlockType.T;
-					break;
-				case Z:
-					type = BlockType.Z;
-					break;
-				default:
-					break;
+					BlockType type = null;
+					switch (currentPiece.getType()) {
+					case I:
+						type = BlockType.I;
+						break;
+					case J:
+						type = BlockType.J;
+						break;
+					case L:
+						type = BlockType.L;
+						break;
+					case O:
+						type = BlockType.O;
+						break;
+					case S:
+						type = BlockType.S;
+						break;
+					case T:
+						type = BlockType.T;
+						break;
+					case Z:
+						type = BlockType.Z;
+						break;
+					default:
+						break;
+					}
+
+					drawBlock(g.create(), type, positionX, positionY, false);
+					TestOutput.sysout(positionX + "," + positionY);
 				}
-
-				drawBlock(g.create(), type, positionX, positionY, false);
-				TestOutput.sysout(positionX + "," +positionY);
-
 			}
 
 			// draw score or other things
@@ -94,14 +97,15 @@ public class Display extends Canvas {
 
 	private void drawBlock(Graphics g, BlockType type, int x, int y, boolean isLocked) {
 		Graphics2D g2d = (Graphics2D) g;
-		
+
 		g.translate(x, y);
 
 		if (type != BlockType.None) {
-			
+
 			Image bgImage = null;
 			try {
-				bgImage = ImageIO.read(new File("res/" + type.ordinal()	+ ".png"));
+				bgImage = ImageIO.read(new File("res/" + type.ordinal()
+						+ ".png"));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -109,9 +113,8 @@ public class Display extends Canvas {
 			// 透明度，尚未解決if
 			// (isLocked)g2d.setComposite(AlphaComposite.getInstance(0, 0.8f));
 
-			g2d.drawImage(bgImage, null, null);			
+			g2d.drawImage(bgImage, null, null);
 		}
-
 
 	}
 
@@ -128,7 +131,6 @@ public class Display extends Canvas {
 
 		g2d.drawImage(bgImage, null, null);
 	}
-
 
 	/**
 	 * 

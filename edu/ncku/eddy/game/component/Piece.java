@@ -147,6 +147,30 @@ public abstract class Piece {
 		return false;
 	}
 
+	protected boolean rotatePieceI(RotationMethod rotationMethod) {
+
+		// 判斷接下來的轉位
+		RotationState nextRotationState = getNextRotationState(rotationState, rotationMethod);
+
+		// 判斷每個點是否可用
+		for (OffsetData offsetData : OffsetData.values()) {
+			int[] previousOffsetData = getIOffsetData(rotationState, offsetData);
+			int[] nextOffsetData = getIOffsetData(nextRotationState, offsetData);
+			if (checkPoint(positionLine + previousOffsetData[0]
+					- nextOffsetData[0], positionCol + previousOffsetData[1]
+					- nextOffsetData[1], nextRotationState)) {
+				this.rotationState = nextRotationState;
+				this.positionLine = positionLine + previousOffsetData[0]
+						- nextOffsetData[0];
+				this.positionCol = positionCol + previousOffsetData[1]
+						- nextOffsetData[1];
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	// 前者為line、後者為col，因此剛好跟HardDrop相反
 	protected int[] getJLSTZOffsetData(RotationState rotationState, OffsetData offsetData) {
 		switch (rotationState) {
@@ -201,6 +225,64 @@ public abstract class Piece {
 				return new int[] { 0, 0 };
 			case Offset5:
 				return new int[] { 0, 0 };
+			}
+		}
+		return null;
+	}
+
+	protected int[] getIOffsetData(RotationState rotationState, OffsetData offsetData) {
+		switch (rotationState) {
+		case Default:
+			switch (offsetData) {
+			case Offset1:
+				return new int[] { 0, 0 };
+			case Offset2:
+				return new int[] { 0, -1 };
+			case Offset3:
+				return new int[] { 0, 2 };
+			case Offset4:
+				return new int[] { 0, -1 };
+			case Offset5:
+				return new int[] { 0, 2 };
+			}
+		case Left:
+			switch (offsetData) {
+			case Offset1:
+				return new int[] { 1, 0 };
+			case Offset2:
+				return new int[] { 1, 0 };
+			case Offset3:
+				return new int[] { 1, 0 };
+			case Offset4:
+				return new int[] { -1, 0 };
+			case Offset5:
+				return new int[] { 2, 0 };
+			}
+		case Right:
+			switch (offsetData) {
+			case Offset1:
+				return new int[] { 0, -1 };
+			case Offset2:
+				return new int[] { 0, 0 };
+			case Offset3:
+				return new int[] { 0, 0 };
+			case Offset4:
+				return new int[] { 1, 0 };
+			case Offset5:
+				return new int[] { -2, 0 };
+			}
+		case UpsideDown:
+			switch (offsetData) {
+			case Offset1:
+				return new int[] { 1, -1 };
+			case Offset2:
+				return new int[] { 1, 1 };
+			case Offset3:
+				return new int[] { 1, -2 };
+			case Offset4:
+				return new int[] { 0, 1 };
+			case Offset5:
+				return new int[] { 0, -2 };
 			}
 		}
 		return null;

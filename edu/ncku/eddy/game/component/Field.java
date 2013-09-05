@@ -42,7 +42,8 @@ public class Field {
 				
 				for(int newCol=0;newCol<10;newCol++){
 					blocks[29][newCol] = new Block(BlockType.None);
-				}								
+				}		
+				line--;//使下落的那行能被判斷
 			}			
 		}
 	}

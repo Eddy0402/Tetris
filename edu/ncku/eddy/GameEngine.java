@@ -1,5 +1,7 @@
 package edu.ncku.eddy;
 
+import java.util.Random;
+
 import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Field;
@@ -23,6 +25,13 @@ public class GameEngine {
 
 	// drop失敗兩次則lock
 	private int lockCount = 0;
+	
+	//使用的Piece數量
+	private int pieceCount;
+
+	public int getPieceCount() {
+		return pieceCount;
+	}
 
 	public GameEngine() {
 		this.gameField = new Field();
@@ -31,8 +40,10 @@ public class GameEngine {
 	public void startGame() {
 		gameField.reset();
 
-		// TODO:測試期間先用固定數測試
-		long seed = 155165516;
+		//種子碼
+		long seed = new Random().nextLong();
+		
+		pieceCount = 0;		
 
 		randomizer = new Randomizer(seed);
 		getNewPiece();
@@ -44,6 +55,7 @@ public class GameEngine {
 	}
 	
 	private void getNewPiece(){
+		TestOutput.sysout(pieceCount);
 		currentPiece = randomizer.getNewPiece();
 		if (!currentPiece.canMoveDown()){
 			gameOver();
@@ -81,8 +93,10 @@ public class GameEngine {
 
 	public void hardDrop() {
 		do {
-			currentPiece.moveDown();
-		} while (!currentPiece.moveDown());
+			
+		} while (currentPiece.moveDown());
+		lockPiece();
+		shouldRedraw = true;
 	}
 
 	public void drop() {
@@ -93,13 +107,14 @@ public class GameEngine {
 			lockCount++;
 			if (lockCount > 1) {
 				lockPiece();
-				shouldRedraw = true;
 				lockCount = 0;
 			}
 		}
+		shouldRedraw = true;
 	}
 
 	public void lockPiece() {
+		pieceCount++;
 		for (BlockMovingPosition blockMovingPosition : currentPiece.getBlocks()) {
 			Type pieceType = currentPiece.getType();
 			BlockType blockType;
@@ -191,7 +206,8 @@ public class GameEngine {
 		public void tick() {
 			tickCount++;
 
-			if (tickCount - lastDrop > 10) {
+			//每秒下降一次
+			if (tickCount - lastDrop > 100) {
 				targetEngine.drop();
 				TestOutput.sysout("drop tick");
 				lastDrop = tickCount;
