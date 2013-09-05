@@ -5,18 +5,13 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.image.BufferStrategy;
 import java.io.File;
-import java.util.TimerTask;
-
 import javax.imageio.ImageIO;
 
 import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Piece;
 import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
-import edu.ncku.eddy.util.TestOutput;
 
 public class Display extends Canvas {
 
@@ -26,22 +21,25 @@ public class Display extends Canvas {
 	private int line;
 	private int col;
 
-	public Display(GameEngine gameEngine) {
-		setSize(320, 480);
+	private GameEngine gameEngine;
 
+	public Display(GameEngine gameEngine) {
+		this.gameEngine = gameEngine;
+
+		setSize(320, 480);
 	}
-	
+
 	public void update() {
-	    	
+
 		Graphics offgc;
 		Image offscreen = null;
 		Dimension d = getSize();
-		
-	    offscreen = createImage(d.width, d.height);
-	    offgc = offscreen.getGraphics();
 
-	    paint(offgc);
-	    
+		offscreen = createImage(d.width, d.height);
+		offgc = offscreen.getGraphics();
+
+		paint(offgc);
+
 		this.getGraphics().drawImage(offscreen, 0, 0, this);
 	}
 
@@ -52,10 +50,12 @@ public class Display extends Canvas {
 		drawBackground(g.create());
 
 		// if playing
-		line = 0;
-		if (Launcher.gameEngine.isGameRunning()) {
+		if (gameEngine.isGameRunning()) {
+
 			// draw blocks
-			for (Block[] blockline : Launcher.gameEngine.GetField().getblocks()) {
+
+			line = 0;
+			for (Block[] blockline : gameEngine.GetField().getblocks()) {
 				col = 0;
 				for (Block block : blockline) {
 					int positionX = LEFT + col * 16;
@@ -72,46 +72,78 @@ public class Display extends Canvas {
 			}
 
 			// draw piece
-			Piece currentPiece = Launcher.gameEngine.getCurrentPiece();
+			Piece currentPiece = gameEngine.getCurrentPiece();
 			for (BlockMovingPosition blockpPosition : currentPiece.getBlocks()) {
 				if (blockpPosition.line < 20) {
 					int positionX = LEFT + blockpPosition.col * 16;
 					int positionY = TOP + 304 - blockpPosition.line * 16;
 
-					BlockType type = null;
-					switch (currentPiece.getType()) {
-					case I:
-						type = BlockType.I;
-						break;
-					case J:
-						type = BlockType.J;
-						break;
-					case L:
-						type = BlockType.L;
-						break;
-					case O:
-						type = BlockType.O;
-						break;
-					case S:
-						type = BlockType.S;
-						break;
-					case T:
-						type = BlockType.T;
-						break;
-					case Z:
-						type = BlockType.Z;
-						break;
-					default:
-						break;
+					BlockType type = convertToBlockType(currentPiece.getType());
+
+					drawBlock(g.create(), type, positionX, positionY, false);
+				}
+			}
+
+			// draw hold
+			Piece holdPiece = gameEngine.getHoldPiece();
+			if (holdPiece != null) {
+				for (BlockMovingPosition blockpPosition : holdPiece.getBlocks()) {
+					int positionX = LEFT - 110 + blockpPosition.col * 16;
+					int positionY = TOP + 350 - blockpPosition.line * 16;
+
+					BlockType type = convertToBlockType(holdPiece.getType());
+
+					drawBlock(g.create(), type, positionX, positionY, false);
+				}
+
+			}
+
+			// draw nextPieces
+			int nextIndex = 0;
+			for (Piece nextPiece : gameEngine.getRandomizer().getNextPieces()) {
+				for (BlockMovingPosition blockpPosition : nextPiece.getBlocks()) {
+					int positionX = LEFT + 190 + blockpPosition.col * 16;
+					int positionY = TOP + 35 - blockpPosition.line * 16
+							+ nextIndex * 55;
+
+					BlockType type = convertToBlockType(nextPiece.getType());
+
+					// °¾²¾
+					if (type != BlockType.O && type != BlockType.I) {
+						positionX = positionX + 8;
+					}
+
+					if (type == BlockType.I) {
+						positionY = positionY - 8;
 					}
 
 					drawBlock(g.create(), type, positionX, positionY, false);
-					TestOutput.sysout(positionX + "," + positionY);
 				}
+				nextIndex++;
 			}
 
 		}
 
+	}
+
+	private BlockType convertToBlockType(Piece.Type pieceType) {
+		switch (pieceType) {
+		case I:
+			return BlockType.I;
+		case J:
+			return BlockType.J;
+		case L:
+			return BlockType.L;
+		case O:
+			return BlockType.O;
+		case S:
+			return BlockType.S;
+		case T:
+			return BlockType.T;
+		case Z:
+			return BlockType.Z;
+		}
+		return null;
 	}
 
 	private void drawBlock(Graphics g, BlockType type, int x, int y, boolean isLocked) {

@@ -3,7 +3,6 @@ package edu.ncku.eddy.game.component;
 import edu.ncku.eddy.Launcher;
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.mino.*;
-import edu.ncku.eddy.util.TestOutput;
 
 /**
  * 操作中的Tetromino，position代表其中心方塊
@@ -14,7 +13,7 @@ public abstract class Piece {
 	protected int positionCol;
 	protected int positionLine;
 	protected RotationState rotationState = RotationState.Default;
-
+	
 	/**
 	 * Tetromino種類
 	 */
@@ -57,19 +56,19 @@ public abstract class Piece {
 	public static Piece createPiece(Type type, int positionX, int positionY) {
 		switch (type) {
 		case I:
-			return new I(positionY, positionY);
+			return new I(positionX, positionY);
 		case J:
-			return new J(positionY, positionY);
+			return new J(positionX, positionY);
 		case L:
-			return new L(positionY, positionY);
+			return new L(positionX, positionY);
 		case O:
-			return new O(positionY, positionY);
+			return new O(positionX, positionY);
 		case S:
-			return new S(positionY, positionY);
+			return new S(positionX, positionY);
 		case T:
-			return new T(positionY, positionY);
+			return new T(positionX, positionY);
 		case Z:
-			return new Z(positionY, positionY);
+			return new Z(positionX, positionY);
 		default:
 			return null;
 		}
@@ -354,8 +353,16 @@ public abstract class Piece {
 	 * @return <code>true</code> 可移動 <code>false</code> 不可移動
 	 */
 	public final boolean canMoveDown() {
-		TestOutput.sysout(checkPoint(positionLine - 1, positionCol, rotationState));
 		return checkPoint(positionLine - 1, positionCol, rotationState);
+	}
+	
+	/**
+	 * 判斷可否出現(是否出局)
+	 * 
+	 * @return <code>true</code> 可移動 <code>false</code> 不可移動
+	 */
+	public final boolean canAppear() {
+		return checkPoint(positionLine , positionCol, rotationState);
 	}
 
 	/**

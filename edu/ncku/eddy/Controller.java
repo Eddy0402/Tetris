@@ -24,6 +24,7 @@ public class Controller {
 		window.setFocusable(true);
 
 		Launcher.gameDisplay.addKeyListener(this.keyListener);
+		Launcher.scoreDisplay.addKeyListener(this.keyListener);
 	}
 
 	public void stopListener() {
@@ -70,7 +71,8 @@ public class Controller {
 					targetEngine.rotatePiece(RotationMethod.Left);
 					break;
 				case 16:
-					// TODO:Shift(Hold)
+					// Shift(Hold)
+					targetEngine.hold();
 					break;
 				case 32:
 					// Space(HardDrop)
