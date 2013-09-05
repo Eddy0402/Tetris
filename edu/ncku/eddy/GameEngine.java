@@ -132,6 +132,7 @@ public class GameEngine {
 
 			blocks[blockMovingPosition.line][blockMovingPosition.col] = new Block(blockType);
 		}
+		gameField.checkLineClear();
 		getNewPiece();
 	}
 
