@@ -1,9 +1,6 @@
 package edu.ncku.eddy.game.component.mino;
 
 import edu.ncku.eddy.game.component.Piece;
-import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
-import edu.ncku.eddy.game.component.Piece.RotationMethod;
-import edu.ncku.eddy.game.component.Piece.RotationState;
 
 public class T extends Piece {
 

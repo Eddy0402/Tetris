@@ -92,13 +92,21 @@ public class Display extends Canvas {
 			}
 
 			// draw score or other things
+			
+			drawScore(g.create());
+			
 		}
+	}
+	
+	private void drawScore(Graphics g)	{
+		Graphics2D g2d = (Graphics2D) g;
+		
 	}
 
 	private void drawBlock(Graphics g, BlockType type, int x, int y, boolean isLocked) {
 		Graphics2D g2d = (Graphics2D) g;
 
-		g.translate(x, y);
+		g2d.translate(x, y);
 
 		if (type != BlockType.None) {
 

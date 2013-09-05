@@ -1,6 +1,10 @@
 package edu.ncku.eddy;
 
+import java.sql.Time;
 import java.util.Random;
+import java.util.Timer;
+
+import javax.swing.JOptionPane;
 
 import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Block.BlockType;
@@ -20,7 +24,7 @@ public class GameEngine {
 
 	private boolean gameRunning = false;
 	private boolean shouldRedraw;
-
+	
 	private Thread gameThread;
 
 	// drop失敗兩次則lock
@@ -50,8 +54,8 @@ public class GameEngine {
 
 		gameThread = new GameDisplayThread(this);
 		gameRunning = true;
-		gameThread.start();
-
+		gameThread.start();		
+		
 	}
 	
 	private void getNewPiece(){
@@ -63,7 +67,9 @@ public class GameEngine {
 	}
 
 	public void gameOver() {
+		Launcher.gameDisplay.repaint();
 		stopGame();
+		JOptionPane.showMessageDialog(null, "Game Over! Press Enter to restart.");
 	}
 
 	public void stopGame() {
@@ -72,7 +78,6 @@ public class GameEngine {
 			gameThread.interrupt();
 		}
 		gameRunning = false;
-		Launcher.keyController.stopListener();
 	}
 
 	public void pause() {

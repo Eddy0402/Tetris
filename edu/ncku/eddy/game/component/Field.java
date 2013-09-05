@@ -1,7 +1,5 @@
 package edu.ncku.eddy.game.component;
 
-import java.awt.Color;
-
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
 

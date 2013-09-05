@@ -2,8 +2,6 @@ package edu.ncku.eddy.util;
 
 import java.util.Random;
 
-import org.omg.CORBA.Current;
-
 import edu.ncku.eddy.Launcher;
 import edu.ncku.eddy.game.component.Piece;
 import edu.ncku.eddy.game.component.mino.*;

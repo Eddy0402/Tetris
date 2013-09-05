@@ -6,6 +6,8 @@ import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JOptionPane;
+
 public class Launcher {
 
 	private static final int PREFERRED_HEIGHT = 800;
@@ -41,6 +43,8 @@ public class Launcher {
 		
 		keyController = new Controller(Launcher.mainFrame,gameEngine );
 		keyController.startListener();
+		
+		JOptionPane.showMessageDialog(null, "Press Enter to start.");
 				
 		/*
 		GUI guiManager = new GUI(mainFrame);
