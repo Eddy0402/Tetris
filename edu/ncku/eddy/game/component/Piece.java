@@ -37,6 +37,13 @@ public abstract class Piece {
 	}
 
 	/**
+	 * 旋轉判定點編號
+	 */
+	protected enum OffsetData {
+		Offset1, Offset2, Offset3, Offset4, Offset5
+	}
+
+	/**
 	 * 建立新的當前Tetromino 初始位置預設為X:4(第5格)、Y:19(第20格)
 	 * 
 	 * @param type
@@ -92,19 +99,21 @@ public abstract class Piece {
 	}
 
 	/**
-	 * 傳入中心位置及轉位，獲得該Tetromino所有的方塊，傳回BlockMovingPosition陣列
-	 * <b>於子類別實作</b>
+	 * 傳入中心位置及轉位，獲得該Tetromino所有的方塊，傳回BlockMovingPosition陣列 <b>於子類別實作</b>
 	 * 
-	 * @param positionLine 目標方塊中心位置
-	 * @param positionCol 目標方塊中心位置
-	 * @param rotationState 轉位
+	 * @param positionLine
+	 *            目標方塊中心位置
+	 * @param positionCol
+	 *            目標方塊中心位置
+	 * @param rotationState
+	 *            轉位
 	 * @return BlockMovingPosition陣列
 	 */
 	public abstract BlockMovingPosition[] getBlocks(int positionLine, int positionCol, RotationState rotationState);
 
 	/**
-	 * 旋轉Tetromino(含多個測試點)
-	 * <b>於子類別實作</b>
+	 * 旋轉Tetromino(含多個測試點) <b>於子類別實作</b>
+	 * 
 	 * @see {@link http://harddrop.com/wiki/SRS}
 	 * @see {@link http://tetris.wikia.com/wiki/SRS}
 	 * 
@@ -113,6 +122,89 @@ public abstract class Piece {
 	 * @return <code>true</code> 有旋轉 <code>false</code> 未旋轉
 	 */
 	public abstract boolean rotatePiece(RotationMethod rotationMethod);
+
+	protected boolean rotatePieceJLSTZ(RotationMethod rotationMethod) {
+
+		// 判斷接下來的轉位
+		RotationState nextRotationState = getNextRotationState(rotationState, rotationMethod);
+
+		// 判斷每個點是否可用
+		for (OffsetData offsetData : OffsetData.values()) {
+			int[] previousOffsetData = getJLSTZOffsetData(rotationState, offsetData);
+			int[] nextOffsetData = getJLSTZOffsetData(nextRotationState, offsetData);
+			if (checkPoint(positionLine + previousOffsetData[0]
+					- nextOffsetData[0], positionCol + previousOffsetData[1]
+					- nextOffsetData[1], nextRotationState)) {
+				this.rotationState = nextRotationState;
+				this.positionLine = positionLine + previousOffsetData[0]
+						- nextOffsetData[0];
+				this.positionCol = positionCol + previousOffsetData[1]
+						- nextOffsetData[1];
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	// 前者為line、後者為col，因此剛好跟HardDrop相反
+	protected int[] getJLSTZOffsetData(RotationState rotationState, OffsetData offsetData) {
+		switch (rotationState) {
+		case Default:
+			switch (offsetData) {
+			case Offset1:
+				return new int[] { 0, 0 };
+			case Offset2:
+				return new int[] { 0, 0 };
+			case Offset3:
+				return new int[] { 0, 0 };
+			case Offset4:
+				return new int[] { 0, 0 };
+			case Offset5:
+				return new int[] { 0, 0 };
+			}
+		case Left:
+			switch (offsetData) {
+			case Offset1:
+				return new int[] { 0, 0 };
+			case Offset2:
+				return new int[] { 0, -1 };
+			case Offset3:
+				return new int[] { -1, -1 };
+			case Offset4:
+				return new int[] { 2, 0 };
+			case Offset5:
+				return new int[] { 2, -1 };
+			}
+		case Right:
+			switch (offsetData) {
+			case Offset1:
+				return new int[] { 0, 0 };
+			case Offset2:
+				return new int[] { 0, 1 };
+			case Offset3:
+				return new int[] { -1, 1 };
+			case Offset4:
+				return new int[] { 2, 0 };
+			case Offset5:
+				return new int[] { 2, 1 };
+			}
+		case UpsideDown:
+			switch (offsetData) {
+			case Offset1:
+				return new int[] { 0, 0 };
+			case Offset2:
+				return new int[] { 0, 0 };
+			case Offset3:
+				return new int[] { 0, 0 };
+			case Offset4:
+				return new int[] { 0, 0 };
+			case Offset5:
+				return new int[] { 0, 0 };
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * 左移Tetromino
@@ -180,7 +272,7 @@ public abstract class Piece {
 	 * @return <code>true</code> 可移動 <code>false</code> 不可移動
 	 */
 	public final boolean canMoveDown() {
-		TestOutput.sysout( checkPoint(positionLine - 1, positionCol, rotationState));
+		TestOutput.sysout(checkPoint(positionLine - 1, positionCol, rotationState));
 		return checkPoint(positionLine - 1, positionCol, rotationState);
 	}
 
@@ -200,16 +292,59 @@ public abstract class Piece {
 		boolean result = true;
 
 		for (BlockMovingPosition position : getBlocks(positionLine, positionCol, rotationState)) {
-			if (Launcher.gameEngine.GetField().getBlock(position) == null){
+			if (Launcher.gameEngine.GetField().getBlock(position) == null) {
 				result = false;
 				return result;
 			}
-			if (Launcher.gameEngine.GetField().getBlock(position).getBlockType() != BlockType.None){
+			if (Launcher.gameEngine.GetField().getBlock(position).getBlockType() != BlockType.None) {
 				result = false;
 			}
 		}
 
 		return result;
+	}
+
+	protected final RotationState getNextRotationState(RotationState previosRotationState, RotationMethod rotationMethod) {
+		switch (rotationMethod) {
+		case Left:
+			switch (previosRotationState) {
+			case Default:
+				return RotationState.Left;
+			case Left:
+				return RotationState.UpsideDown;
+			case Right:
+				return RotationState.Default;
+			case UpsideDown:
+				return RotationState.Right;
+			}
+			break;
+		case Right:
+			switch (previosRotationState) {
+			case Default:
+				return RotationState.Right;
+			case Left:
+				return RotationState.Default;
+			case Right:
+				return RotationState.UpsideDown;
+			case UpsideDown:
+				return RotationState.Left;
+			}
+			break;
+		case UpsideDown:
+			switch (previosRotationState) {
+			case Default:
+				return RotationState.UpsideDown;
+			case Left:
+				return RotationState.Right;
+			case Right:
+				return RotationState.Left;
+			case UpsideDown:
+				return RotationState.Default;
+			}
+			break;
+		}
+		// 上面已經判斷所有可能，此行是為了通過編譯
+		return previosRotationState;
 	}
 
 	/**

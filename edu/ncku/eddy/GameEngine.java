@@ -93,6 +93,7 @@ public class GameEngine {
 			lockCount++;
 			if (lockCount > 1) {
 				lockPiece();
+				shouldRedraw = true;
 				lockCount = 0;
 			}
 		}

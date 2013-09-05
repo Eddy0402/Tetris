@@ -50,11 +50,11 @@ public class J extends Piece {
 
 	@Override
 	public boolean rotatePiece(RotationMethod rotationMethod) {
-
-		//判斷接下來的轉位
 		
-		return false;
+		return rotatePieceJLSTZ(rotationMethod);
+		
 	}
+
 
 	@Override
 	public Type getType() {
