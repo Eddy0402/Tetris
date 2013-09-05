@@ -1,6 +1,7 @@
 package edu.ncku.eddy.game.component;
 
 import edu.ncku.eddy.game.component.Block.BlockType;
+import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
 
 public class Field {
 
@@ -30,6 +31,10 @@ public class Field {
 		} else {
 			return this.blocks[x][y];
 		}
+	}
+	
+	public Block getBlock(BlockMovingPosition position){
+		return getBlock(position.line, position.col);
 	}
 
 	public void reset() {

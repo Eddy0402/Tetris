@@ -17,10 +17,12 @@ public class GameEngine {
 	private Randomizer randomizer;
 
 	private boolean gameRunning = false;
-	protected boolean shouldRedraw;
+	private boolean shouldRedraw;
 
 	private Thread gameThread;
 
+	// drop失敗兩次則lock
+	private int lockCount = 0;
 
 	public GameEngine() {
 		this.gameField = new Field();
@@ -41,9 +43,10 @@ public class GameEngine {
 
 	}
 
-	public void gameOver(){
+	public void gameOver() {
 		stopGame();
 	}
+
 	public void stopGame() {
 
 		if (gameThread != null && gameThread.isAlive()) {
@@ -76,18 +79,23 @@ public class GameEngine {
 	}
 
 	public void drop() {
+
 		TestOutput.sysout("drop()");
-		if(currentPiece.moveDown()){
+		if (currentPiece.moveDown()) {
 			shouldRedraw = true;
-		}else{
-			lockPiece();
+		} else {
+			lockCount++;
+			if (lockCount > 1) {
+				lockPiece();
+				lockCount = 0;
+			}
 		}
 	}
 
 	public void lockPiece() {
 		for (BlockMovingPosition blockMovingPosition : currentPiece.getBlocks()) {
-			if (blockMovingPosition.line > 19){
-				gameOver();	
+			if (blockMovingPosition.line > 19) {
+				gameOver();
 				return;
 			}
 			Type pieceType = currentPiece.getType();
