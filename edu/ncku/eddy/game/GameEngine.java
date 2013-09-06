@@ -1,17 +1,17 @@
-package edu.ncku.eddy;
+package edu.ncku.eddy.game;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-import edu.ncku.eddy.game.component.Block;
-import edu.ncku.eddy.game.component.Block.BlockType;
-import edu.ncku.eddy.game.component.Field;
-import edu.ncku.eddy.game.component.Piece;
-import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
-import edu.ncku.eddy.game.component.Piece.RotationMethod;
-import edu.ncku.eddy.game.component.Piece.Type;
-import edu.ncku.eddy.util.Randomizer;
+import edu.ncku.eddy.Launcher;
+import edu.ncku.eddy.component.Block;
+import edu.ncku.eddy.component.Field;
+import edu.ncku.eddy.component.Piece;
+import edu.ncku.eddy.component.Block.BlockType;
+import edu.ncku.eddy.component.Piece.BlockMovingPosition;
+import edu.ncku.eddy.component.Piece.RotationMethod;
+import edu.ncku.eddy.component.Piece.Type;
 import edu.ncku.eddy.util.TestOutput;
 
 public class GameEngine {
@@ -25,14 +25,19 @@ public class GameEngine {
 		return randomizer;
 	}
 	
-	//遊戲提示
-	public boolean gameReady;
-	public boolean gameGo;
-	public boolean gameStop;
-	public boolean gameOver;
+	//遊戲狀態
+	public enum GameState{
+		Initial , Ready , Go , Playing, Stopped , GameOver
+	}
+	
+	private GameState gameState;
+	
+	public GameState getGameState() {
+		return gameState;
+	}
 
-	private boolean gameRunning = false;
 	private boolean shouldRedraw;
+	public boolean shouldRepaintField=true;
 	private Thread gameThread;
 
 	// drop失敗兩次則lock
@@ -53,11 +58,11 @@ public class GameEngine {
 
 	public GameEngine() {
 		this.gameField = new Field();
+		
+		this.gameState=GameState.Initial;
 	}
 
 	public void startGame() {
-		gameStop = false;
-		gameOver = false;
 		
 		gameField.reset();
 		
@@ -66,11 +71,11 @@ public class GameEngine {
 		pieceIndex = 0;
 		clearedLine = 0;
 		usedPieceCount = 0;
+		currentPiece = null;
 
 		// 種子碼
 		long seed = new Random().nextLong();
-		randomizer = new Randomizer(seed);
-		
+		randomizer = new Randomizer(seed);		
 
 		gameThread = new GameDisplayThread(this);
 		gameThread.start();
@@ -86,23 +91,20 @@ public class GameEngine {
 	}
 
 	public void gameOver() {
-		gameOver = true;
+		gameState = GameState.GameOver;
 		Launcher.gameDisplay.update();
 		if (gameThread != null && gameThread.isAlive()) {
 			gameThread.interrupt();
 		}
-		gameRunning = false;
-
 	}
 
 	public void stopGame() {
-		gameStop=true;
+		gameState = GameState.Stopped;
 		Launcher.gameDisplay.update();
+		
 		if (gameThread != null && gameThread.isAlive()) {
 			gameThread.interrupt();
 		}
-		gameRunning = false;
-
 	}
 
 	public void pause() {
@@ -137,6 +139,7 @@ public class GameEngine {
 			if (holdPieceIndex != pieceIndex) {
 				Piece tempPiece = currentPiece;
 				currentPiece = holdPiece;
+				currentPiece.regenerateGhostPiece();
 				if (!currentPiece.canAppear()) {
 					gameOver();
 				}
@@ -177,7 +180,7 @@ public class GameEngine {
 	}
 	
 	public void lockPiece() {
-
+		shouldRepaintField = true;
 		usedPieceCount++;
 		for (BlockMovingPosition blockMovingPosition : currentPiece.getBlocks()) {
 			Type pieceType = currentPiece.getType();
@@ -220,10 +223,6 @@ public class GameEngine {
 		return this.gameField;
 	}
 
-	public boolean isGameRunning() {
-		return gameRunning;
-	}
-
 	public Piece getCurrentPiece() {
 		return currentPiece;
 	}
@@ -255,8 +254,8 @@ public class GameEngine {
 			tickCount = 0;	
 			shouldRedraw = true;
 			
-			//Ready? Go階段
-			gameReady=true;
+			//Ready? 階段
+			gameState = GameState.Ready;
 			Launcher.gameDisplay.update();
 			try {
 				Thread.sleep(800);
@@ -264,24 +263,25 @@ public class GameEngine {
 				e.printStackTrace();
 			}
 			
-			gameGo=true;
-			gameReady=false;
+			//Go! 階段
+			gameState = GameState.Go;
 			Launcher.gameDisplay.update();
 			try {
 				Thread.sleep(800);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			gameGo=false;
-			Launcher.gameDisplay.update();
 			
-			getNewPiece();			
-			gameRunning = true;
+			gameState = GameState.Playing;
+			getNewPiece();	
+			shouldRepaintField=true;
+			Launcher.gameDisplay.update();
+					
 			startTimeMillis = System.currentTimeMillis();
 			// 遊戲迴圈
 			do {
 				tick();				
-			} while (isGameRunning());
+			} while (gameState == GameState.Playing);
 
 		}
 

@@ -8,14 +8,21 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JOptionPane;
 
+import edu.ncku.eddy.game.Controller;
+import edu.ncku.eddy.game.GameEngine;
+import edu.ncku.eddy.ui.Display;
+import edu.ncku.eddy.ui.ScoreDisplay;
+
 public class Launcher {
 
 	private static final int PREFERRED_HEIGHT = 480;
 	private static final int PREFERRED_WEIGHT = 640;
 	
-	public static Frame mainFrame;
 	public static Controller keyController;
 	public static GameEngine gameEngine;
+	
+	public static Frame mainFrame;
+	public static Panel panel;
 	public static Display gameDisplay;
 	public static ScoreDisplay scoreDisplay;
 	
@@ -34,7 +41,7 @@ public class Launcher {
 			    }
 		});
 		
-		Panel panel = new Panel(null);
+		panel = new Panel(null);
 		mainFrame.add(panel);
 
 		mainFrame.setVisible(true);

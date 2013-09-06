@@ -1,10 +1,12 @@
-package edu.ncku.eddy;
+package edu.ncku.eddy.game;
 
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import edu.ncku.eddy.game.component.Piece.RotationMethod;
+import edu.ncku.eddy.Launcher;
+import edu.ncku.eddy.component.Piece.RotationMethod;
+import edu.ncku.eddy.game.GameEngine.GameState;
 import edu.ncku.eddy.util.TestOutput;
 
 public class Controller {
@@ -12,6 +14,7 @@ public class Controller {
 	private Frame window;
 	private GameEngine targetEngine;
 	private GameKeyListener keyListener;
+	private GameKeyAdapter keyAdapter;
 
 	public Controller(Frame window, GameEngine targetEngine) {
 		this.window = window;
@@ -19,16 +22,26 @@ public class Controller {
 	}
 
 	public void startListener() {
-		this.keyListener = this.new GameKeyListener();
-		window.addKeyListener(this.keyListener);
-		window.setFocusable(true);
+
+		this.keyAdapter = new GameKeyAdapter();
+		// Launcher.gameDisplay.addKeyListener(this.keyAdapter);
+		// Launcher.scoreDisplay.addKeyListener(this.keyAdapter);
+
+		this.keyListener = new GameKeyListener();
 
 		Launcher.gameDisplay.addKeyListener(this.keyListener);
 		Launcher.scoreDisplay.addKeyListener(this.keyListener);
+
 	}
 
 	public void stopListener() {
-		this.window.removeKeyListener(this.keyListener);
+		Launcher.gameDisplay.removeKeyListener(this.keyAdapter);
+		Launcher.scoreDisplay.removeKeyListener(this.keyAdapter);
+		this.keyAdapter = null;
+	}
+
+	public void moveLeftOnce() {
+		targetEngine.moveLeft();
 	}
 
 	public class GameKeyListener implements KeyListener {
@@ -38,13 +51,15 @@ public class Controller {
 			int keycode = e.getKeyCode();
 			TestOutput.sysout(keycode);
 
+			GameState gameState = targetEngine.getGameState();
 			if (keycode == 10) {
-				if (!targetEngine.isGameRunning() && ! targetEngine.gameGo && !targetEngine.gameReady) {
+				if (gameState != GameState.Ready && gameState != GameState.Go
+						&& gameState != GameState.Playing) {
 					targetEngine.startGame();
 				}
 			}
 
-			if (targetEngine.isGameRunning()) {
+			if (gameState == GameState.Playing) {
 				switch (keycode) {
 				case 37:
 					// ¥ª
@@ -77,7 +92,7 @@ public class Controller {
 				case 32:
 					// Space(HardDrop)
 					targetEngine.hardDrop();
-					break;					
+					break;
 				case 27:
 					// µ²§ô¹CÀ¸
 					targetEngine.stopGame();

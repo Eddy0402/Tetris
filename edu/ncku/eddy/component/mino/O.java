@@ -1,25 +1,25 @@
-package edu.ncku.eddy.game.component.mino;
+package edu.ncku.eddy.component.mino;
 
-import edu.ncku.eddy.game.component.Piece;
+import edu.ncku.eddy.component.Piece;
 
-public class I extends Piece {
+public class O extends Piece {
 
-	public I(int positionX, int positionY) {
+	public O(int positionX, int positionY) {
 		super(positionX, positionY);
 	}
 
-	public I(int positionX, int positionY, boolean isGhost) {
+	public O(int positionX, int positionY, boolean isGhost) {
 		super(positionX, positionY,isGhost);
 	}
 
 	@Override
 	public boolean rotatePiece(RotationMethod rotationMethod) {
-		return rotatePieceI(rotationMethod);
+		return false;
 	}
 
 	@Override
 	public Type getType() {
-		return Type.I;
+		return Type.O;
 	}
 
 	public BlockMovingPosition[] getBlocks(int positionLine, int positionCol, RotationState rotationState) {
@@ -30,27 +30,27 @@ public class I extends Piece {
 		switch (rotationState) {
 		case Default:
 			blockMovingPosition1 = new BlockMovingPosition(positionLine + 0, positionCol + 0);
-			blockMovingPosition2 = new BlockMovingPosition(positionLine + 0, positionCol - 1);
+			blockMovingPosition2 = new BlockMovingPosition(positionLine + 1, positionCol + 0);
 			blockMovingPosition3 = new BlockMovingPosition(positionLine + 0, positionCol + 1);
-			blockMovingPosition4 = new BlockMovingPosition(positionLine + 0, positionCol + 2);
+			blockMovingPosition4 = new BlockMovingPosition(positionLine + 1, positionCol + 1);
 			break;
 		case Left:
 			blockMovingPosition1 = new BlockMovingPosition(positionLine + 0, positionCol + 0);
 			blockMovingPosition2 = new BlockMovingPosition(positionLine + 1, positionCol + 0);
-			blockMovingPosition3 = new BlockMovingPosition(positionLine + 2, positionCol + 0);
-			blockMovingPosition4 = new BlockMovingPosition(positionLine - 1, positionCol + 0);
+			blockMovingPosition3 = new BlockMovingPosition(positionLine + 1, positionCol - 1);
+			blockMovingPosition4 = new BlockMovingPosition(positionLine + 0, positionCol - 1);
 			break;
 		case Right:
 			blockMovingPosition1 = new BlockMovingPosition(positionLine + 0, positionCol + 0);
-			blockMovingPosition2 = new BlockMovingPosition(positionLine + 1, positionCol + 0);
+			blockMovingPosition2 = new BlockMovingPosition(positionLine + 0, positionCol + 1);
 			blockMovingPosition3 = new BlockMovingPosition(positionLine - 1, positionCol + 0);
-			blockMovingPosition4 = new BlockMovingPosition(positionLine - 2, positionCol + 0);
+			blockMovingPosition4 = new BlockMovingPosition(positionLine - 1, positionCol + 1);
 			break;
 		case UpsideDown:
 			blockMovingPosition1 = new BlockMovingPosition(positionLine + 0, positionCol + 0);
-			blockMovingPosition2 = new BlockMovingPosition(positionLine + 0, positionCol - 1);
-			blockMovingPosition3 = new BlockMovingPosition(positionLine + 0, positionCol + 1);
-			blockMovingPosition4 = new BlockMovingPosition(positionLine + 0, positionCol - 2);
+			blockMovingPosition2 = new BlockMovingPosition(positionLine - 1, positionCol + 0);
+			blockMovingPosition3 = new BlockMovingPosition(positionLine + 0, positionCol - 1);
+			blockMovingPosition4 = new BlockMovingPosition(positionLine - 1, positionCol - 1);
 			break;
 		}
 

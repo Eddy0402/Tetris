@@ -1,32 +1,16 @@
-package edu.ncku.eddy.game.component.mino;
+package edu.ncku.eddy.component.mino;
 
-import edu.ncku.eddy.game.component.Piece;
+import edu.ncku.eddy.component.Piece;
 
-public class L extends Piece {
+public class J extends Piece {
 
-	public L(int positionX, int positionY) {
+	public J(int positionX, int positionY) {
 		super(positionX, positionY);
+
 	}
 
-
-
-	public L(int positionX, int positionY, boolean isGhost) {
+	public J(int positionX, int positionY, boolean isGhost) {
 		super(positionX, positionY,isGhost);
-	}
-
-
-
-	@Override
-	public boolean rotatePiece(RotationMethod rotationMethod) {
-		
-		return rotatePieceJLSTZ(rotationMethod);
-		
-	}
-
-
-	@Override
-	public Type getType() {
-		return Type.L;
 	}
 
 	public BlockMovingPosition[] getBlocks(int positionLine, int positionCol, RotationState rotationState) {
@@ -39,25 +23,25 @@ public class L extends Piece {
 			blockMovingPosition1 = new BlockMovingPosition(positionLine + 0, positionCol + 0);
 			blockMovingPosition2 = new BlockMovingPosition(positionLine + 0, positionCol - 1);
 			blockMovingPosition3 = new BlockMovingPosition(positionLine + 0, positionCol + 1);
-			blockMovingPosition4 = new BlockMovingPosition(positionLine + 1, positionCol + 1);
+			blockMovingPosition4 = new BlockMovingPosition(positionLine + 1, positionCol - 1);
 			break;
 		case Left:
 			blockMovingPosition1 = new BlockMovingPosition(positionLine + 0, positionCol + 0);
 			blockMovingPosition2 = new BlockMovingPosition(positionLine + 1, positionCol + 0);
 			blockMovingPosition3 = new BlockMovingPosition(positionLine - 1, positionCol + 0);
-			blockMovingPosition4 = new BlockMovingPosition(positionLine + 1, positionCol - 1);
+			blockMovingPosition4 = new BlockMovingPosition(positionLine - 1, positionCol - 1);
 			break;
 		case Right:
 			blockMovingPosition1 = new BlockMovingPosition(positionLine + 0, positionCol + 0);
 			blockMovingPosition2 = new BlockMovingPosition(positionLine + 1, positionCol + 0);
 			blockMovingPosition3 = new BlockMovingPosition(positionLine - 1, positionCol + 0);
-			blockMovingPosition4 = new BlockMovingPosition(positionLine - 1, positionCol + 1);
+			blockMovingPosition4 = new BlockMovingPosition(positionLine + 1, positionCol + 1);
 			break;
 		case UpsideDown:
 			blockMovingPosition1 = new BlockMovingPosition(positionLine + 0, positionCol + 0);
 			blockMovingPosition2 = new BlockMovingPosition(positionLine + 0, positionCol - 1);
 			blockMovingPosition3 = new BlockMovingPosition(positionLine + 0, positionCol + 1);
-			blockMovingPosition4 = new BlockMovingPosition(positionLine - 1, positionCol - 1);
+			blockMovingPosition4 = new BlockMovingPosition(positionLine - 1, positionCol + 1);
 			break;
 		}
 
@@ -66,6 +50,19 @@ public class L extends Piece {
 				blockMovingPosition3, blockMovingPosition4 };
 
 		return blockList;
+	}
+
+	@Override
+	public boolean rotatePiece(RotationMethod rotationMethod) {
+		
+		return rotatePieceJLSTZ(rotationMethod);
+		
+	}
+
+
+	@Override
+	public Type getType() {
+		return Type.J;
 	}
 
 }

@@ -1,7 +1,7 @@
-package edu.ncku.eddy.game.component;
+package edu.ncku.eddy.component;
 
-import edu.ncku.eddy.game.component.Block.BlockType;
-import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
+import edu.ncku.eddy.component.Block.BlockType;
+import edu.ncku.eddy.component.Piece.BlockMovingPosition;
 
 public class Field {
 

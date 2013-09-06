@@ -1,8 +1,8 @@
-package edu.ncku.eddy.game.component;
+package edu.ncku.eddy.component;
 
 import edu.ncku.eddy.Launcher;
-import edu.ncku.eddy.game.component.Block.BlockType;
-import edu.ncku.eddy.game.component.mino.*;
+import edu.ncku.eddy.component.Block.BlockType;
+import edu.ncku.eddy.component.mino.*;
 
 /**
  * 操作中的Tetromino，position代表其中心方塊

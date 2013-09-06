@@ -1,4 +1,4 @@
-package edu.ncku.eddy;
+package edu.ncku.eddy.ui;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -11,6 +11,8 @@ import java.io.File;
 import java.text.NumberFormat;
 
 import javax.imageio.ImageIO;
+
+import edu.ncku.eddy.game.GameEngine;
 
 public class ScoreDisplay extends Canvas {
 

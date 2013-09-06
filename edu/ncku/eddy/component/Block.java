@@ -1,4 +1,4 @@
-package edu.ncku.eddy.game.component;
+package edu.ncku.eddy.component;
 
 public class Block {
 	

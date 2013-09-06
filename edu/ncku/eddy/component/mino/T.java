@@ -1,6 +1,6 @@
-package edu.ncku.eddy.game.component.mino;
+package edu.ncku.eddy.component.mino;
 
-import edu.ncku.eddy.game.component.Piece;
+import edu.ncku.eddy.component.Piece;
 
 public class T extends Piece {
 
