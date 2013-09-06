@@ -1,0 +1,21 @@
+39,37,40,32,38,90,88,16,27,10,150,22,20,yes
+
+右,左,緩降,順降,順轉,逆轉,180轉,Hold,停止遊戲,開始遊戲,DAS*,ARR*,ARR(soft drop)*,是否左右移動到底後停止*
+
+預設：
+↑順轉
+Ｚ逆轉
+Ｘ180轉
+←左
+→右
+空格 順降
+Shift Hold
+Enter 開始
+Esc 結束
+
+keycode列表：http://javagp.group.iteye.com/group/topic/12218
+
+*DAS,ARR (按鍵重複延遲) 單位：毫秒
+詳情：http://www.ptt.cc/bbs/tetris/M.1313326351.A.CDC.html
+
+*yes/no：若為yes，方塊左右到底後再旋轉即使按著方向也不會繼續移動，預設no

@@ -165,7 +165,12 @@ public class GameEngine {
 	}
 
 	public boolean softDrop(){
-		return drop();
+		if (currentPiece.moveDown()) {
+			shouldRedraw = true;
+			return true;
+		} else {
+			return false;
+		}		
 	}
 	
 	public boolean drop() {
@@ -180,8 +185,7 @@ public class GameEngine {
 				lockCount = 0;
 			}			
 			return false;
-		}
-		
+		}		
 	}
 
 	public void moveDown() {
