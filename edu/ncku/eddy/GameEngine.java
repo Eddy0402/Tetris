@@ -4,8 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-import javax.swing.JOptionPane;
-
 import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Field;
@@ -26,10 +24,15 @@ public class GameEngine {
 	public Randomizer getRandomizer() {
 		return randomizer;
 	}
+	
+	//遊戲提示
+	public boolean gameReady;
+	public boolean gameGo;
+	public boolean gameStop;
+	public boolean gameOver;
 
 	private boolean gameRunning = false;
 	private boolean shouldRedraw;
-
 	private Thread gameThread;
 
 	// drop失敗兩次則lock
@@ -53,22 +56,25 @@ public class GameEngine {
 	}
 
 	public void startGame() {
+		gameStop = false;
+		gameOver = false;
+		
 		gameField.reset();
-
-		// 種子碼
-		long seed = new Random().nextLong();
-
+		
+		//初始化各數據
+		holdPiece = null;
 		pieceIndex = 0;
 		clearedLine = 0;
 		usedPieceCount = 0;
 
+		// 種子碼
+		long seed = new Random().nextLong();
 		randomizer = new Randomizer(seed);
-		getNewPiece();
+		
 
 		gameThread = new GameDisplayThread(this);
-		gameRunning = true;
 		gameThread.start();
-
+			
 	}
 
 	private void getNewPiece() {
@@ -80,23 +86,27 @@ public class GameEngine {
 	}
 
 	public void gameOver() {
+		gameOver = true;
+		Launcher.gameDisplay.update();
 		if (gameThread != null && gameThread.isAlive()) {
 			gameThread.interrupt();
 		}
 		gameRunning = false;
-		JOptionPane.showMessageDialog(null, "Game Over! Press Enter to restart.");
+
 	}
 
 	public void stopGame() {
+		gameStop=true;
+		Launcher.gameDisplay.update();
 		if (gameThread != null && gameThread.isAlive()) {
 			gameThread.interrupt();
 		}
 		gameRunning = false;
-		JOptionPane.showMessageDialog(null, "Game Stoped! Press Enter to restart.");
+
 	}
 
 	public void pause() {
-		// TODO:暫緩
+		// TODO:尚未實作
 	}
 
 	public void moveLeft() {
@@ -110,8 +120,10 @@ public class GameEngine {
 	}
 
 	public void rotatePiece(RotationMethod rotationMethod) {
-		if (currentPiece.rotatePiece(rotationMethod))
+		if (currentPiece.rotatePiece(rotationMethod)){
+			currentPiece.regenerateGhostPiece();
 			shouldRedraw = true;
+		}
 	}
 
 	public void hold() {
@@ -157,6 +169,13 @@ public class GameEngine {
 		shouldRedraw = true;
 	}
 
+	public void moveDown() {
+		if (currentPiece.moveDown()) {
+			shouldRedraw = true;
+		}
+		
+	}
+	
 	public void lockPiece() {
 
 		usedPieceCount++;
@@ -233,13 +252,35 @@ public class GameEngine {
 		public void run() {
 
 			time40L = "";
-			tickCount = 0;
+			tickCount = 0;	
 			shouldRedraw = true;
+			
+			//Ready? Go階段
+			gameReady=true;
+			Launcher.gameDisplay.update();
+			try {
+				Thread.sleep(800);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			gameGo=true;
+			gameReady=false;
+			Launcher.gameDisplay.update();
+			try {
+				Thread.sleep(800);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			gameGo=false;
+			Launcher.gameDisplay.update();
+			
+			getNewPiece();			
+			gameRunning = true;
 			startTimeMillis = System.currentTimeMillis();
-
 			// 遊戲迴圈
 			do {
-				tick();
+				tick();				
 			} while (isGameRunning());
 
 		}
@@ -253,8 +294,8 @@ public class GameEngine {
 		public void tick() {
 			tickCount++;
 
-			// 每秒下降一次
-			if (tickCount - lastDrop > 100) {
+			// 每0.5秒下降一次
+			if (tickCount - lastDrop > 50) {
 				targetEngine.drop();
 				TestOutput.sysout("drop tick");
 				lastDrop = tickCount;
@@ -288,4 +329,6 @@ public class GameEngine {
 			}
 		}
 	}
+
+
 }

@@ -28,7 +28,7 @@ public class ScoreDisplay extends Canvas {
 	}
 
 	public void update(String time, int pieceCount, int clearedLine, double pps, double ppm, double lpm, String time40L) {
-	    
+
 		this.time = time;
 		this.pieceCount = pieceCount;
 		this.clearedLine = clearedLine;
@@ -36,23 +36,21 @@ public class ScoreDisplay extends Canvas {
 		this.ppm = ppm;
 		this.lpm = lpm;
 		this.time40L = time40L;
-		
+
 		Graphics offgc;
 		Image offscreen = null;
 		Dimension d = getSize();
-		
-	    offscreen = createImage(d.width, d.height);
-	    offgc = offscreen.getGraphics();
 
-	    paint(offgc);
-	    
+		offscreen = createImage(d.width, d.height);
+		offgc = offscreen.getGraphics();
+
+		paint(offgc);
+
 		this.getGraphics().drawImage(offscreen, 0, 0, this);
 	}
 
 	@Override
 	public void paint(Graphics g) {
-
-
 
 		drawBackground(g.create());
 
@@ -81,8 +79,9 @@ public class ScoreDisplay extends Canvas {
 		g2d.drawString(nfFormat.format(pps), 50, 275);
 		g2d.drawString(nfFormat.format(ppm), 50, 325);
 		g2d.drawString(nfFormat.format(lpm), 50, 375);
-		g2d.drawString("Cleared 40 Lines in :" + time40L, 50, 400);
-		
+		if (!time40L.equals("")) {
+			g2d.drawString("Cleared 40 Lines in :" + time40L, 50, 400);
+		}
 
 	}
 

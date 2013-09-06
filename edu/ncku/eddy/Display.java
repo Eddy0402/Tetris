@@ -1,17 +1,23 @@
 package edu.ncku.eddy;
 
+import java.awt.AlphaComposite;
 import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
+
 import javax.imageio.ImageIO;
 
 import edu.ncku.eddy.game.component.Block;
 import edu.ncku.eddy.game.component.Block.BlockType;
 import edu.ncku.eddy.game.component.Piece;
 import edu.ncku.eddy.game.component.Piece.BlockMovingPosition;
+import edu.ncku.eddy.util.Config;
 
 public class Display extends Canvas {
 
@@ -46,7 +52,7 @@ public class Display extends Canvas {
 	@Override
 	public void paint(Graphics g) {
 
-		// initialize
+		// Background
 		drawBackground(g.create());
 
 		// if playing
@@ -63,12 +69,27 @@ public class Display extends Canvas {
 
 					if (line < 20) {
 						if (block.getBlockType() != BlockType.None) {
-							drawBlock(g.create(), block.getBlockType(), positionX, positionY, true);
+							drawBlock(g.create(), block.getBlockType(), positionX, positionY, 1);
 						}
 					}
 					col++;
 				}
 				line++;
+			}
+
+			// draw ghost
+			if (Config.enableGhost) {
+				Piece currentGhostPiece = gameEngine.getCurrentPiece().getGhost();
+				for (BlockMovingPosition blockpPosition : currentGhostPiece.getBlocks()) {
+					if (blockpPosition.line < 20) {
+						int positionX = LEFT + blockpPosition.col * 16;
+						int positionY = TOP + 304 - blockpPosition.line * 16;
+
+						BlockType type = convertToBlockType(currentGhostPiece.getType());
+
+						drawBlock(g.create(), type, positionX, positionY, .3f);
+					}
+				}
 			}
 
 			// draw piece
@@ -80,7 +101,7 @@ public class Display extends Canvas {
 
 					BlockType type = convertToBlockType(currentPiece.getType());
 
-					drawBlock(g.create(), type, positionX, positionY, false);
+					drawBlock(g.create(), type, positionX, positionY, .8f);
 				}
 			}
 
@@ -93,7 +114,7 @@ public class Display extends Canvas {
 
 					BlockType type = convertToBlockType(holdPiece.getType());
 
-					drawBlock(g.create(), type, positionX, positionY, false);
+					drawBlock(g.create(), type, positionX, positionY, .8f);
 				}
 
 			}
@@ -117,11 +138,70 @@ public class Display extends Canvas {
 						positionY = positionY - 8;
 					}
 
-					drawBlock(g.create(), type, positionX, positionY, false);
+					drawBlock(g.create(), type, positionX, positionY, .8f);
 				}
 				nextIndex++;
 			}
 
+		}
+
+		// Hint
+		if (gameEngine.gameReady || gameEngine.gameGo || gameEngine.gameStop
+				|| gameEngine.gameOver) {
+			Graphics2D g2d = (Graphics2D) g.create();
+
+			if (gameEngine.gameReady || gameEngine.gameGo) {
+				int nextIndex = 0;
+				for (Piece nextPiece : gameEngine.getRandomizer().getNextPieces()) {
+					for (BlockMovingPosition blockpPosition : nextPiece.getBlocks()) {
+						int positionX = LEFT + 190 + blockpPosition.col * 16;
+						int positionY = TOP + 35 - blockpPosition.line * 16
+								+ nextIndex * 55;
+
+						BlockType type = convertToBlockType(nextPiece.getType());
+
+						// 偏移
+						if (type != BlockType.O && type != BlockType.I) {
+							positionX = positionX + 8;
+						}
+
+						if (type == BlockType.I) {
+							positionY = positionY - 8;
+						}
+
+						drawBlock(g.create(), type, positionX, positionY, .8f);
+					}
+					nextIndex++;
+				}
+			}
+
+			if (gameEngine.gameReady) {
+				g2d.translate(110, 250);
+				g2d.setColor(Color.gray);
+				g2d.setFont(new Font("SansSerif", Font.BOLD, 24));
+				g2d.drawString("Ready?", 0, 0);
+			}
+
+			if (gameEngine.gameGo) {
+				g2d.translate(125, 250);
+				g2d.setColor(Color.gray);
+				g2d.setFont(new Font("SansSerif", Font.BOLD, 24));
+				g2d.drawString("Go!", 0, 0);
+			}
+
+			if (gameEngine.gameStop) {
+				g2d.translate(75, 250);
+				g2d.setColor(Color.white);
+				g2d.setFont(new Font("SansSerif", Font.BOLD, 15));
+				g2d.drawString("Stopped. press Enter to restart.", 0, 0);
+			}
+
+			if (gameEngine.gameOver) {
+				g2d.translate(75, 250);
+				g2d.setColor(Color.white);
+				g2d.setFont(new Font("SansSerif", Font.BOLD, 15));
+				g2d.drawString("Game Over! press Enter to restart.", 0, 0);
+			}
 		}
 
 	}
@@ -146,7 +226,7 @@ public class Display extends Canvas {
 		return null;
 	}
 
-	private void drawBlock(Graphics g, BlockType type, int x, int y, boolean isLocked) {
+	private void drawBlock(Graphics g, BlockType type, int x, int y, float alphaValue) {
 		Graphics2D g2d = (Graphics2D) g;
 
 		g2d.translate(x, y);
@@ -161,8 +241,8 @@ public class Display extends Canvas {
 				ex.printStackTrace();
 			}
 
-			// 透明度，尚未解決if
-			// (isLocked)g2d.setComposite(AlphaComposite.getInstance(0, 0.8f));
+			Composite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue);
+			g2d.setComposite(alpha);
 
 			g2d.drawImage(bgImage, null, null);
 		}

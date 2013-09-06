@@ -13,7 +13,8 @@ public abstract class Piece {
 	protected int positionCol;
 	protected int positionLine;
 	protected RotationState rotationState = RotationState.Default;
-	
+	protected Piece ghostPiece;
+
 	/**
 	 * Tetromino種類
 	 */
@@ -53,34 +54,54 @@ public abstract class Piece {
 	 *            初始位置Y
 	 * @return 相應的Piece物件
 	 */
-	public static Piece createPiece(Type type, int positionX, int positionY) {
+	public static Piece createPiece(Type type, int positionX, int positionY, boolean isGhost) {
 		switch (type) {
 		case I:
-			return new I(positionX, positionY);
+			return new I(positionX, positionY, isGhost);
 		case J:
-			return new J(positionX, positionY);
+			return new J(positionX, positionY, isGhost);
 		case L:
-			return new L(positionX, positionY);
+			return new L(positionX, positionY, isGhost);
 		case O:
-			return new O(positionX, positionY);
+			return new O(positionX, positionY, isGhost);
 		case S:
-			return new S(positionX, positionY);
+			return new S(positionX, positionY, isGhost);
 		case T:
-			return new T(positionX, positionY);
+			return new T(positionX, positionY, isGhost);
 		case Z:
-			return new Z(positionX, positionY);
+			return new Z(positionX, positionY, isGhost);
 		default:
 			return null;
 		}
 	}
 
+	public static Piece createPiece(Type type, int positionX, int positionY) {
+		return createPiece(type, positionX, positionY, false);
+	}
+
 	/**
 	 * 內部叫用方法，取得方塊實體
 	 */
-	protected Piece(int positionCol, int positionLine) {
+	public Piece(int positionCol, int positionLine, boolean isGhost) {
 		this.positionCol = positionCol;
 		this.positionLine = positionLine;
 		rotationState = RotationState.Default;
+		if (!isGhost) {
+			regenerateGhostPiece();
+		}
+	}
+
+	protected Piece(int positionCol, int positionLine) {
+		this(positionCol, positionLine, false);
+	}
+
+	public void regenerateGhostPiece() {
+		ghostPiece = Piece.createPiece(getType(), positionCol, positionLine,true);
+		ghostPiece.rotationState = rotationState;
+		
+		while (ghostPiece.moveDown()) {
+			ghostPiece.moveDown();
+		}
 	}
 
 	/**
@@ -295,6 +316,7 @@ public abstract class Piece {
 	public final boolean moveLeft() {
 		if (canMoveLeft()) {
 			positionCol--;
+			regenerateGhostPiece();
 			return true;
 		} else {
 			return false;
@@ -309,6 +331,7 @@ public abstract class Piece {
 	public final boolean moveRight() {
 		if (canMoveRight()) {
 			positionCol++;
+			regenerateGhostPiece();
 			return true;
 		} else {
 			return false;
@@ -355,14 +378,14 @@ public abstract class Piece {
 	public final boolean canMoveDown() {
 		return checkPoint(positionLine - 1, positionCol, rotationState);
 	}
-	
+
 	/**
 	 * 判斷可否出現(是否出局)
 	 * 
 	 * @return <code>true</code> 可移動 <code>false</code> 不可移動
 	 */
 	public final boolean canAppear() {
-		return checkPoint(positionLine , positionCol, rotationState);
+		return checkPoint(positionLine, positionCol, rotationState);
 	}
 
 	/**
@@ -449,6 +472,10 @@ public abstract class Piece {
 			this.line = line;
 			this.col = col;
 		}
+	}
+
+	public Piece getGhost() {
+		return ghostPiece;
 	}
 
 }

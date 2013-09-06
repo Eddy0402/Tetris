@@ -8,6 +8,10 @@ public class O extends Piece {
 		super(positionX, positionY);
 	}
 
+	public O(int positionX, int positionY, boolean isGhost) {
+		super(positionX, positionY,isGhost);
+	}
+
 	@Override
 	public boolean rotatePiece(RotationMethod rotationMethod) {
 		return false;

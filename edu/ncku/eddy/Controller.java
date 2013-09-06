@@ -39,12 +39,12 @@ public class Controller {
 			TestOutput.sysout(keycode);
 
 			if (keycode == 10) {
-				if (!Launcher.gameEngine.isGameRunning()) {
-					Launcher.gameEngine.startGame();
+				if (!targetEngine.isGameRunning() && ! targetEngine.gameGo && !targetEngine.gameReady) {
+					targetEngine.startGame();
 				}
 			}
 
-			if (Launcher.gameEngine.isGameRunning()) {
+			if (targetEngine.isGameRunning()) {
 				switch (keycode) {
 				case 37:
 					// 左
@@ -56,7 +56,7 @@ public class Controller {
 					break;
 				case 40:
 					// 下(softdrop)
-					targetEngine.drop();
+					targetEngine.moveDown();
 					break;
 				case 38:
 					// 上(180度轉)

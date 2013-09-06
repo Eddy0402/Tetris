@@ -9,6 +9,10 @@ public class J extends Piece {
 
 	}
 
+	public J(int positionX, int positionY, boolean isGhost) {
+		super(positionX, positionY,isGhost);
+	}
+
 	public BlockMovingPosition[] getBlocks(int positionLine, int positionCol, RotationState rotationState) {
 
 		BlockMovingPosition blockMovingPosition1 = null, blockMovingPosition2 = null, blockMovingPosition3 = null, blockMovingPosition4 = null;
